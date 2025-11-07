@@ -5,6 +5,7 @@ export class RulesResponseDto {
     this.description = rule.description;
     this.sql = rule.sql;
     this.priority = rule.priority;
+    this.roles = rule.roles;
     this.execution_interval = rule.execution_interval;
     this.max_error_count = rule.max_error_count;
     this.timeout = rule.timeout;

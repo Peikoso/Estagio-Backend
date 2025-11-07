@@ -6,6 +6,7 @@ export class CreateRulesDto {
         this.description = rule.description;
         this.sql = rule.sql;
         this.priority = rule.priority;
+        this.roles = rule.roles;
         this.execution_interval = Number(rule.execution_interval);
         this.max_error_count = Number(rule.max_error_count);
         this.timeout = Number(rule.timeout);
@@ -39,6 +40,10 @@ export class CreateRulesDto {
 
         if(typeof this.priority !== 'string' || this.priority.trim() === '') {
             throw new ValidationError('Priority must be baixa, media, or alta');
+        }
+
+        if(!Array.isArray(this.roles) || this.roles.length === 0 || !this.roles.every(role => typeof role === 'string')) {
+            throw new ValidationError('Roles must be a non-empty array of strings');
         }
 
         if(isNaN(this.execution_interval)) {
@@ -76,6 +81,10 @@ export class CreateRulesDto {
             throw new ValidationError('User creator ID must be a non-empty string');
         }
 
+        if(this.user_creator_id.length !== 36) {
+            throw new ValidationError('User creator ID must be a valid UUID');
+        }
+        
         return this;
     }
 

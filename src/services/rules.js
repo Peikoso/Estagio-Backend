@@ -3,6 +3,7 @@ import { RulesResponseDto } from "../dto/rules/responseRulesDto.js";
 import { CreateRulesDto } from "../dto/rules/createRulesDto.js";
 import { Rules } from "../models/rules.js";
 import { ValidationError, NotFoundError } from "../utils/errors.js";
+import { isValidUuid } from "../utils/valid_uuid.js"
 
 export const RuleService = {
     getAllRules: async () => {
@@ -11,7 +12,17 @@ export const RuleService = {
     },
 
     getRuleById: async (id) => {
-        //Logica a ser implementada
+        if(!isValidUuid(id)){
+            throw new ValidationError('Invalid UUID.')
+        }
+
+        const rule = await RuleRepository.findById(id)
+
+        if(!rule){
+            throw new NotFoundError('Rule not found.')
+        }
+
+        return new RulesResponseDto(rule);
     },
 
     createRule: async (ruleData) => {
