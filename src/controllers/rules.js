@@ -6,7 +6,7 @@ export const RulesController = {
             const rules = await RuleService.getAllRules();
             res.status(200).json(rules);
         } catch (error) {
-            console.error(error)
+            console.error(error);
             return res.status(500).json({ error: 'Internal Server Error' });
         }
     },

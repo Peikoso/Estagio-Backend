@@ -1,9 +1,9 @@
-import { RuleRepository } from "../repositories/rules.js";
-import { RulesResponseDto } from "../dto/rules/responseRulesDto.js";
-import { CreateRulesDto } from "../dto/rules/createRulesDto.js";
-import { Rules } from "../models/rules.js";
-import { ValidationError, NotFoundError } from "../utils/errors.js";
-import { isValidUuid } from "../utils/valid_uuid.js"
+import { RuleRepository } from '../repositories/rules.js';
+import { RulesResponseDto } from '../dto/rules/responseRulesDto.js';
+import { CreateRulesDto } from '../dto/rules/createRulesDto.js';
+import { Rules } from '../models/rules.js';
+import { ValidationError, NotFoundError } from '../utils/errors.js';
+import { isValidUuid } from '../utils/valid_uuid.js'
 
 export const RuleService = {
     getAllRules: async () => {

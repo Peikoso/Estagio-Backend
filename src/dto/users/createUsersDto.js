@@ -1,13 +1,13 @@
-import { ValidationError } from "../utils/errors";
+import { ValidationError } from '../../utils/errors.js';
 
-export class CreteUsersDto {
+export class CreateUsersDto {
     constructor(user){
         this.name = user.name;
         this.matricula = user.matricula;
         this.email = user.email;
         this.profile = user.profile ?? 'viewer';
-        this.roles = user.roles ?? null;
-        this.pending = user.pending;
+        this.roles = user.roles ?? [];
+        this.pending = user.pending ?? true;
         this.created_at = user.created_at;
         this.updated_at = user.updated_at;
     }
@@ -25,8 +25,10 @@ export class CreteUsersDto {
         if(typeof this.profile !== 'string' || this.profile.trim() === '') {
             throw new ValidationError('Profile is required and must be a non-empty string');
         }
-        if(!Array.isArray(this.roles) || this.roles.length === 0 || !this.roles.every(role => typeof role === 'string')) {
-            throw new ValidationError('Roles must be a non-empty array of strings');
+        if(!Array.isArray(this.roles) || !this.roles.every(role => typeof role === 'string')) {
+            throw new ValidationError('Roles must be a non-empty array of strings or a empty array');
         }
+
+        return this;
     }
 }

@@ -7,9 +7,9 @@ export class CreateRulesDto {
         this.sql = rule.sql;
         this.priority = rule.priority;
         this.roles = rule.roles;
-        this.execution_interval = Number(rule.execution_interval);
+        this.execution_interval_ms = Number(rule.execution_interval_ms);
         this.max_error_count = Number(rule.max_error_count);
-        this.timeout = Number(rule.timeout);
+        this.timeout_ms = Number(rule.timeout_ms);
         this.start_time = rule.start_time;
         this.end_time = rule.end_time;
         this.notification_enabled = rule.notification_enabled;
@@ -46,14 +46,14 @@ export class CreateRulesDto {
             throw new ValidationError('Roles must be a non-empty array of strings');
         }
 
-        if(isNaN(this.execution_interval)) {
+        if(isNaN(this.execution_interval_ms)) {
             throw new ValidationError('Execution interval must be a number');
         }
 
         if(isNaN(this.max_error_count)) {
             throw new ValidationError('Max error count must be a number');
         }
-        if(isNaN(this.timeout)) {
+        if(isNaN(this.timeout_ms)) {
             throw new ValidationError('Timeout must be a number');
         }
 

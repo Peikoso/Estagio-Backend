@@ -1,4 +1,4 @@
-export class Users {
+export class UsersResponseDto {
     constructor(user){
         this.id = user.id;
         this.firebase_uid = user.firebase_uid;

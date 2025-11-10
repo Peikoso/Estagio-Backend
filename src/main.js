@@ -18,12 +18,12 @@ app.get('/', async(req, res) => {
 app.use('/api/v1', routes);
 
 // Tratamento de erros não capturados
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("Unhandled Rejection:", reason);
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection:', reason);
 });
 
-process.on("uncaughtException", err => {
-  console.error("Uncaught Exception:", err);
+process.on('uncaughtException', err => {
+  console.error('Uncaught Exception:', err);
   // Em produção pode ser desejável reiniciar o processo
 }); // sem esses handlers, a aplicação pode morrer sem logs claros, com eles você pelo menos registra o erro.
 

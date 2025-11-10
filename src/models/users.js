@@ -1,4 +1,4 @@
-import { ValidationError } from "../utils/errors";
+import { ValidationError } from '../utils/errors.js';
 
 export class Users {
     constructor(user){
@@ -32,7 +32,7 @@ export class Users {
         if (!EMAIL_REGEX.test(this.email)) {
             throw new ValidationError('Invalid email format');
         }
-        if (!CELULAR_REGEX.test(this.phone)) {
+        if (this.phone && !CELULAR_REGEX.test(this.phone)) {
             throw new ValidationError('Invalid phone format');
         }
         if(!(this.profile === 'admin' || this.profile === 'operator' || this.profile === 'viewer')) {

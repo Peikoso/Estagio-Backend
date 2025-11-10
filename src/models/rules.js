@@ -9,9 +9,9 @@ export class Rules {
         this.sql = rule.sql;
         this.priority = rule.priority;
         this.roles = rule.roles;
-        this.execution_interval = rule.execution_interval;
+        this.execution_interval_ms = rule.execution_interval_ms;
         this.max_error_count = rule.max_error_count;
-        this.timeout = rule.timeout;
+        this.timeout_ms = rule.timeout_ms;
         this.start_time = rule.start_time;
         this.end_time = rule.end_time;
         this.notification_enabled = rule.notification_enabled;
@@ -24,16 +24,16 @@ export class Rules {
     }
 
     validateBusinessRules() {
-        if(!(this.priority === 'baixa' || this.priority === 'media' || this.priority === 'alta')) {
-            throw new ValidationError('Priority must be baixa, media, or alta');
+        if(!(this.priority === 'LOW' || this.priority === 'MEDIUM' || this.priority === 'HIGH')) {
+            throw new ValidationError('Priority must be LOW, MEDIUM, or HIGH');
         }
-        if (this.execution_interval <= 0) {
+        if (this.execution_interval_ms <= 0) {
             throw new ValidationError('Execution interval must be positive');
         }
         if (this.max_error_count < 0) {
             throw new ValidationError('Max error count cannot be negative');
         }
-        if (this.timeout <= 0) {
+        if (this.timeout_ms <= 0) {
             throw new ValidationError('Timeout must be positive');
         }
         if (this.start_time >= this.end_time) {
