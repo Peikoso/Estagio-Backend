@@ -1,5 +1,5 @@
 import { RuleRepository } from '../repositories/rules.js';
-import { RulesResponseDto } from '../dto/rules/responseRulesDto.js';
+import { ResponseRulesDto } from '../dto/rules/responseRulesDto.js';
 import { CreateRulesDto } from '../dto/rules/createRulesDto.js';
 import { Rules } from '../models/rules.js';
 import { ValidationError, NotFoundError } from '../utils/errors.js';
@@ -8,7 +8,7 @@ import { isValidUuid } from '../utils/valid_uuid.js'
 export const RuleService = {
     getAllRules: async () => {
         const rules = await RuleRepository.findAll();
-        return rules.map(rule => new RulesResponseDto(rule));
+        return ResponseRulesDto.fromArray(rules);
     },
 
     getRuleById: async (id) => {
@@ -22,7 +22,7 @@ export const RuleService = {
             throw new NotFoundError('Rule not found.')
         }
 
-        return new RulesResponseDto(rule);
+        return new ResponseRulesDto(rule);
     },
 
     createRule: async (ruleData) => {
@@ -32,7 +32,7 @@ export const RuleService = {
 
        const newRule = await RuleRepository.create(dto);
 
-       return new RulesResponseDto(newRule);
+       return new ResponseRulesDto(newRule);
     },
 
     updateRule: async (id, ruleData) => {

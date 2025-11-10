@@ -1,5 +1,5 @@
 import { UserRepository } from '../repositories/users.js'
-import { UsersResponseDto } from '../dto/users/responseUsersDto.js'
+import { ResponseUsersDto } from '../dto/users/responseUsersDto.js'
 import { CreateUsersDto } from '../dto/users/createUsersDto.js'
 import { Users } from '../models/users.js'
 import { ValidationError, NotFoundError } from '../utils/errors.js';
@@ -8,7 +8,7 @@ import { isValidUuid } from '../utils/valid_uuid.js'
 export const UserService = {
     getAllUsers: async () => {
         const users = await UserRepository.findAll();
-        return users.map(user => new UsersResponseDto(user));
+        return ResponseUsersDto.fromArray(users);
     },
 
     getUserById: async (id) => {
@@ -22,7 +22,7 @@ export const UserService = {
             throw new NotFoundError('User not found.')
         }
 
-        return new UsersResponseDto(user);
+        return new ResponseUsersDto(user);
     },
 
     createUser: async (userData) => {
@@ -32,6 +32,6 @@ export const UserService = {
 
         const newUser = await UserRepository.create(dto);
 
-        return new UsersResponseDto(newUser);
+        return new ResponseUsersDto(newUser);
     }
 };

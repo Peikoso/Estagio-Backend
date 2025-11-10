@@ -24,6 +24,12 @@ export class Rules {
     }
 
     validateBusinessRules() {
+        if(this.name.length > 100) {
+            throw new ValidationError('Name must be between 1 and 100 characters');
+        }
+        if(this.description.length > 255) {
+            throw new ValidationError('Description must be between 1 and 255 characters');
+        }
         if(!(this.priority === 'LOW' || this.priority === 'MEDIUM' || this.priority === 'HIGH')) {
             throw new ValidationError('Priority must be LOW, MEDIUM, or HIGH');
         }

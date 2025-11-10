@@ -4,7 +4,7 @@ export const UsersController = {
     getAllUsers: async  (req, res) => {
         try{
             const users = await UserService.getAllUsers();
-            res.status(200).json(users);
+            return res.status(200).json(users);
         } catch (error){
             console.error(error);
             return res.status(500).json({ error: 'Internal Server Error' });
@@ -16,9 +16,9 @@ export const UsersController = {
             const id = req.params.id;
             
             const user = await UserService.getUserById(id);
-            res.status(200).json(user);
+            return res.status(200).json(user);
         } catch (error){
-            if(error.message === 'NotFoundError'){
+            if(error.name === 'NotFoundError'){
                 return res.status(error.status).json({error: error.message})
             }
             if(error.name === 'ValidationError'){
@@ -33,7 +33,7 @@ export const UsersController = {
         try{
             const userData = req.body;
             const newUser = await UserService.createUser(userData);
-            res.status(201).json(newUser)
+            return res.status(201).json(newUser)
         } catch (error){
             if (error.name === 'ValidationError') {
                 return res.status(error.status).json({ error: error.message });

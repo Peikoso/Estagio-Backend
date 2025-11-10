@@ -1,4 +1,4 @@
-export class UsersResponseDto {
+export class ResponseUsersDto {
     constructor(user){
         this.id = user.id;
         this.firebase_uid = user.firebase_uid;
@@ -18,7 +18,7 @@ export class UsersResponseDto {
         this.push_sound_enabled = user.push_sound_enabled;
     }
     
-    fromArray(users) {
-        return users.map((user) => new Users(user));
+    static fromArray(usersArray) {
+        return usersArray.map((user) => new ResponseUsersDto(user));
     }
 }

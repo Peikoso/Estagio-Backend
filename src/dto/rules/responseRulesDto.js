@@ -1,4 +1,4 @@
-export class RulesResponseDto {
+export class ResponseRulesDto {
   constructor(rule) {
     this.id = rule.id;
     this.name = rule.name;
@@ -21,7 +21,7 @@ export class RulesResponseDto {
   }
 
 
-  fromArray(rules) {
-    return rules.map((rule) => new RulesResponseDto(rule));
+  static fromArray(rulesArray) {
+    return rulesArray.map((rule) => new ResponseRulesDto(rule));
   }
 }
