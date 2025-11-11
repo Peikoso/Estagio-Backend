@@ -1,6 +1,6 @@
 import { IncidentService } from '../services/incidents.js';
-import { CreateIncidentsDto } from '../dto/incidents/createIncidentsDto.js';
-import { ResponseIncidentsDto } from '../dto/incidents/responseIncidentsDto.js';
+import { CreateIncidentsDto, CreateIncidentsLogsDto } from '../dto/incidents/createIncidentsDto.js';
+import { ResponseIncidentsDto, ResponseIncidentsLogsDto } from '../dto/incidents/responseIncidentsDto.js';
 
 export const IncidentsController = {
     getAllIncidents: async(req, res) => {
@@ -37,6 +37,27 @@ export const IncidentsController = {
         }
     },
 
+    getIncidentLogsByIncidentId: async(req, res) => {
+        try {
+            const id = req.params.id;
+
+            const incidentLogs = await IncidentService.getIncidentesLogsByIncidentId(id);
+
+            const response = ResponseIncidentsLogsDto.fromArray(incidentLogs);
+
+            return res.status(200).json(response);
+        } catch (error) {
+            if(error.name === 'NotFoundError'){
+                res.status(error.status).json({error: error.message})
+            }
+            if(error.name === 'ValidationError'){
+                return res.status(error.status).json({error: error.message});
+            }
+            console.error(error)
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+    },
+
     createIncident: async(req, res) => {
         try {
             const incidentData = req.body;
@@ -58,6 +79,31 @@ export const IncidentsController = {
             console.error(error);
             return res.status(500).json({ error: 'Internal Server Error' });
         }
-    }
+    },
 
+    createIncidentsAction: async(req, res) => {
+        try {
+            const incidentLogData = req.body;
+
+            const dto = new CreateIncidentsLogsDto(incidentLogData).validate();
+
+            const newIncidentLog = await IncidentService.createIncidentsAction(dto);
+
+            const response = new ResponseIncidentsLogsDto(newIncidentLog);
+
+            return res.status(201).json(response);
+        } catch (error) {
+            if(error.name === 'ValidationError'){
+                return res.status(error.status).json({error: error.message});
+            }
+            if(error.name === 'NotFoundError'){
+                return res.status(error.status).json({ error: error.message });
+            }
+            if(error.name === 'BusinessLogicError'){
+                return res.status(error.status).json({ error: error.message });
+            }
+            console.error(error);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
 }

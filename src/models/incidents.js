@@ -1,3 +1,5 @@
+import { BusinessLogicError } from "../utils/errors.js";
+
 export class Incidents {
     constructor(incident) {
         this.id = incident.id;
@@ -15,4 +17,46 @@ export class Incidents {
     static fromArray(incidentsArray) {
         return incidentsArray.map(incident => new Incidents(incident));
     }
-}
+
+    updateStatus(incidentsLogs) {
+        this.status = incidentsLogs.currentStatus;
+
+        if(incidentsLogs.currentStatus === 'ACK'){
+            this.ackAt = new Date();
+        }
+        if(incidentsLogs.currentStatus === 'CLOSED'){
+            this.closedAt = new Date();
+        }
+    }
+};
+
+export class IncidentsLogs {    
+    constructor(IncidentsLogs){
+        this.id = IncidentsLogs.id;
+        this.incidentId = IncidentsLogs.incident_id ?? IncidentsLogs.incidentId;
+        this.previousStatus = IncidentsLogs.previous_status ?? IncidentsLogs.previousStatus;
+        this.currentStatus = IncidentsLogs.current_status ?? IncidentsLogs.currentStatus;
+        this.comment = IncidentsLogs.comment;
+        this.actionUserId = IncidentsLogs.action_user_id ?? IncidentsLogs.actionUserId;
+        this.createdAt = IncidentsLogs.created_at ?? IncidentsLogs.createdAt;
+    }
+
+    static fromArray(incidentsLogsArray){
+        return incidentsLogsArray.map(incidentsLogs => new IncidentsLogs(incidentsLogs));
+    }
+    
+    nextStatus(status){
+        this.previousStatus = status;
+        
+        if(status === 'OPEN'){
+            this.currentStatus = 'ACK';
+        }
+        if(status === 'ACK'){
+            this.currentStatus = 'CLOSED';
+        }
+        if(status === 'CLOSED'){
+            throw new BusinessLogicError('Incident is already CLOSED. No further status updates allowed.');
+        }
+
+    }
+};

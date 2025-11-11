@@ -13,4 +13,20 @@ export class ResponseIncidentsDto {
     static fromArray(incidents) {
         return incidents.map(incident => new ResponseIncidentsDto(incident));
     }
-}
+};
+
+export class ResponseIncidentsLogsDto {
+    constructor(IncidentsLogs){
+        this.id = IncidentsLogs.id;
+        this.incidentId = IncidentsLogs.incidentId;
+        this.previousStatus = IncidentsLogs.previousStatus;
+        this.currentStatus = IncidentsLogs.currentStatus;
+        this.comment = IncidentsLogs.comment;
+        this.actionUserId = IncidentsLogs.actionUserId;
+        this.createdAt = IncidentsLogs.createdAt;
+    }
+    
+    static fromArray(incidentsLogs){
+        return incidentsLogs.map(incidentsLog => new ResponseIncidentsLogsDto(incidentsLog));
+    }
+};

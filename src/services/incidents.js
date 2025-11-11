@@ -1,11 +1,10 @@
-import { IncidentsRepository } from "../repositories/incidents.js";
-import { Incidents } from '../models/incidents.js';
+import { IncidentsRepository, IncidentsLogsRepository } from "../repositories/incidents.js";
+import { Incidents, IncidentsLogs } from '../models/incidents.js';
 import { isValidUuid } from "../utils/valid_uuid.js";
 import { ValidationError, NotFoundError } from "../utils/errors.js";
 import { RoleService } from "./roles.js";
 import { RuleService } from "./rules.js";
 import { UserService } from "./users.js";
-import { IncidentsLogs } from '../models/incidentsLogs.js';
 
 
 export const IncidentService = {
@@ -13,12 +12,6 @@ export const IncidentService = {
         const incidents = await IncidentsRepository.findAll();
 
         return incidents;
-    },
-
-    getAllIncidentsLogs: async () => {
-        const incidentsLogs = await IncidentsLogsRepository.findAll();
-
-        return incidentsLogs;
     },
 
     getIncidentById: async (id) => {
@@ -36,16 +29,12 @@ export const IncidentService = {
 
     },
 
-    getIncidentesLogsById: async (id) => {
-        if(!isValidUuid(id)){
-            throw new ValidationError('Invalid Incidents Logs UUID.');
+    getIncidentesLogsByIncidentId: async (incidentId) => {
+        if(!isValidUuid(incidentId)){
+            throw new ValidationError('Invalid Incident UUID.');
         }
 
-        const incidentLogs = await IncidentsLogsRepository.findById(id);
-
-        if(!incidentLogs){
-            throw new NotFoundError('Incidents Logs not found.');
-        }
+        const incidentLogs = await IncidentsLogsRepository.findByIncidentId(incidentId);
 
         return incidentLogs;
     },
@@ -67,14 +56,15 @@ export const IncidentService = {
 
     createIncidentsAction: async (dto) => {
         const newIncidentsLogs = new IncidentsLogs(dto);
-
-        const incident = await IncidentService.getIncidentById(newIncidentsLogs.incidentId);
         
         await UserService.getUserById(newIncidentsLogs.actionUserId);
+        const incident = await IncidentService.getIncidentById(newIncidentsLogs.incidentId);
         
         newIncidentsLogs.nextStatus(incident.status);
-
         const savedIncidentsLogs = await IncidentsLogsRepository.create(newIncidentsLogs);
+        
+        incident.updateStatus(savedIncidentsLogs);
+        await IncidentsRepository.update(incident);
 
         return savedIncidentsLogs;
     }

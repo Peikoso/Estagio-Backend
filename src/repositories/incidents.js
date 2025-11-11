@@ -1,5 +1,5 @@
 import { pool } from '../config/database_conn.js'
-import { Incidents } from '../models/incidents.js'
+import { Incidents, IncidentsLogs } from '../models/incidents.js'
 
 export const IncidentsRepository = {
     findAll: async () => {
@@ -65,5 +65,69 @@ export const IncidentsRepository = {
         const result = await pool.query(incidentWithRolesQuery, [incidentDB.rows[0].id]);
 
         return new Incidents(result.rows[0]);
+    },
+
+    update: async(incident) => {
+        const updateIncidentQuery =
+        `
+        UPDATE incidents
+        SET assigned_user_id = $1,
+            rule_id = $2,
+            status = $3,
+            priority = $4,
+            ack_at = $5,
+            closed_at = $6,
+            updated_at = NOW()
+        WHERE id = $7
+        RETURNING *;
+        `;
+        const values = [
+            incident.assignedUserId,
+            incident.ruleId,
+            incident.status,
+            incident.priority,
+            incident.ackAt,
+            incident.closedAt,
+            incident.id
+        ];
+        const result = await pool.query(updateIncidentQuery, values);
+
+        return new Incidents(result.rows[0]);
     }
+};
+
+export const IncidentsLogsRepository = {
+    findByIncidentId: async (incidentId) => {
+        const selectByIncidentIdQuery =
+        `
+        SELECT * FROM incidents_logs
+        WHERE incident_id = $1
+        ORDER BY created_at DESC;
+        `;
+
+        const result = await pool.query(selectByIncidentIdQuery, [incidentId]);
+
+        return IncidentsLogs.fromArray(result.rows);
+    },
+
+    create: async(incidentsLogs) => {
+        const insertIncidentsLogsQuery =
+        `
+        INSERT INTO incidents_logs
+        (incident_id, previous_status, current_status, comment, action_user_id)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *;
+        `
+        const values = [
+            incidentsLogs.incidentId,
+            incidentsLogs.previousStatus,
+            incidentsLogs.currentStatus,
+            incidentsLogs.comment,
+            incidentsLogs.actionUserId
+        ]
+        const result = await pool.query(insertIncidentsLogsQuery, values);
+
+        return new IncidentsLogs(result.rows[0]);
+    }
+
 };
