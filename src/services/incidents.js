@@ -14,7 +14,7 @@ export const IncidentService = {
 
     getIncidentById: async (id) => {
         if(!isValidUuid(id)){
-            throw new ValidationError('Invalid UUID.');
+            throw new ValidationError('Invalid Incident UUID.');
         }
 
         const incident = await IncidentsRepository.findById(id);
@@ -30,14 +30,14 @@ export const IncidentService = {
     createIncident: async (incidentData) => {
         const dto = new CreateIncidentsDto(incidentData).validate();
 
-        new Incidents(dto).validateBusinessLogic();
+        const newIncident = new Incidents(dto);
 
-        for(roleId of dto.roles){
+        for(roleId of newIncident.roles){
             await RoleService.getRoleById(roleId);
         }
 
-        const newIncident = IncidentsRepository.create(dto);
+        const savedIncident = await IncidentsRepository.create(newIncident);
 
-        return new ResponseIncidentsDto(newIncident);
+        return new ResponseIncidentsDto(savedIncident);
     }
 }

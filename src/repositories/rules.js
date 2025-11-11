@@ -1,4 +1,5 @@
 import { pool } from '../config/database_conn.js';
+import { Rules } from '../models/rules.js';
 
 export const RulesRepository = {
     findAll: async () => {
@@ -13,7 +14,7 @@ export const RulesRepository = {
             `
         );
 
-        return result.rows;
+        return Rules.fromArray(result.rows);
     },
 
     findById: async (id) => {
@@ -29,7 +30,7 @@ export const RulesRepository = {
 
        const result = await pool.query(selectIdQuery, [id]);
 
-       return result.rows[0];
+       return new Rules(result.rows[0]);
     },
 
     create: async (ruleData) => {
@@ -78,7 +79,7 @@ export const RulesRepository = {
 
         const result = await pool.query(ruleWithRolesQuery, [ruleDB.rows[0].id]);
         
-        return result.rows[0];
+        return new Rules(result.rows[0]);
     },
 
     update: async (id, ruleData) => {

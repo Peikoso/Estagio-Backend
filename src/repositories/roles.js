@@ -1,4 +1,5 @@
 import { pool } from '../config/database_conn.js';
+import { Roles } from '../models/roles.js';
 
 export const RolesRepository = {
     findAll: async () => {
@@ -9,7 +10,7 @@ export const RolesRepository = {
             `
         );
 
-        return result.rows;
+        return Roles.fromArray(result.rows);
     },
 
     findById: async (id) => {
@@ -21,7 +22,7 @@ export const RolesRepository = {
 
         const result = await pool.query(selectIdQuery, [id]);
 
-        return result.rows[0];
+        return new Roles(result.rows[0]);
     },
 
     create: async(roleData) =>{
@@ -41,6 +42,6 @@ export const RolesRepository = {
         
         const roleDB = await pool.query(insertRoleQuery, values);
 
-        return roleDB.rows[0];
+        return new Roles(roleDB.rows[0]);
     }
 };

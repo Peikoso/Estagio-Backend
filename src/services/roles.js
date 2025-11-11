@@ -29,10 +29,10 @@ export const RoleService = {
     createRole: async (roleData) => {
         const dto = new CreateRolesDto(roleData).validate();
         
-        new Roles(dto).validateBusinessLogic();
+        const newRole = new Roles(dto);
 
-        const newRole = await RolesRepository.create(dto);
+        const savedRole = await RolesRepository.create(newRole);
 
-        return new ResponseRolesDto(newRole);
+        return new ResponseRolesDto(savedRole);
     }
 };

@@ -1,4 +1,5 @@
 import { pool } from '../config/database_conn.js';
+import { Users } from '../models/users.js'
 
 export const UsersRepository = {
     findAll: async () => {
@@ -13,7 +14,8 @@ export const UsersRepository = {
             `
         );
         
-        return result.rows;
+
+        return Users.fromArray(result.rows);
     },
 
     findById: async (id) => {
@@ -29,7 +31,7 @@ export const UsersRepository = {
 
         const result = await pool.query(selectIdQuery, [id]);
 
-        return result.rows[0];
+        return new Users(result.rows[0]);
     },
 
     create: async(userData) =>{
@@ -69,6 +71,6 @@ export const UsersRepository = {
 
         const result = await pool.query(userWithRolesQuery, [userDB.rows[0].id]);
         
-        return result.rows[0];
+        return new Users(result.rows[0]);
     }
 };

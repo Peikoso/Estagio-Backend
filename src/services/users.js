@@ -17,7 +17,7 @@ export const UserService = {
             throw new ValidationError('Invalide User UUID.')
         }
 
-        const user = UsersRepository.findById(id)
+        const user = await UsersRepository.findById(id)
 
         if(!user){
             throw new NotFoundError('User not found.')
@@ -29,15 +29,14 @@ export const UserService = {
     createUser: async (userData) => {
         const dto = new CreateUsersDto(userData).validate();
 
-        new Users(dto).validateBusinessLogic();
+        const newUser = new Users(dto);
 
-        for(const roleId of dto.roles){
-            console.log(roleId)
+        for(const roleId of newUser.roles){
             await RoleService.getRoleById(roleId);
         }
 
-        const newUser = await UsersRepository.create(dto);
+        const savedUser = await UsersRepository.create(newUser);
 
-        return new ResponseUsersDto(newUser);
+        return new ResponseUsersDto(savedUser);
     }
 };

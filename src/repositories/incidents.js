@@ -1,4 +1,5 @@
 import { pool } from '../config/database_conn.js'
+import { Incidents } from '../models/incidents.js'
 
 export const IncidentsRepository = {
     findAll: async () => {
@@ -9,7 +10,7 @@ export const IncidentsRepository = {
             `
         );
 
-        return result.rows;
+        return Incidents.fromArray(result.rows);
     },
 
     findById: async(id) => {
@@ -21,7 +22,7 @@ export const IncidentsRepository = {
 
         const result = await pool.query(selectIdQuery, [id]);
 
-        return result.rows[0];
+        return new Incidents(result.rows[0]);
     },
 
     create: async(incidentData) => {
@@ -42,6 +43,6 @@ export const IncidentsRepository = {
 
         const result = await pool.query(insertIncidentQuery, values);
 
-        return result.rows[0];
+        return new Incidents(result.rows[0]);
     }
 };

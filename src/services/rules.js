@@ -29,15 +29,15 @@ export const RuleService = {
     createRule: async (ruleData) => {
         const dto = new CreateRulesDto(ruleData).validate();
 
-        new Rules(dto).validateBusinessLogic();
+        const newRule = new Rules(dto);
 
-        for(const roleId of dto.roles){
+        for(const roleId of newRule.roles){
             await RoleService.getRoleById(roleId);
         }
 
-        const newRule = await RulesRepository.create(dto);
-
-        return new ResponseRulesDto(newRule);
+        const savedRule = await RulesRepository.create(newRule);
+        
+        return new ResponseRulesDto(savedRule);
     },
 
     updateRule: async (id, ruleData) => {

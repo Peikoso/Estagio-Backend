@@ -1,5 +1,3 @@
-import { ValidationError } from '../utils/errors.js'
-
 export class Incidents {
     constructor(incident) {
         this.id = incident.id;
@@ -13,12 +11,7 @@ export class Incidents {
         this.updatedAt = incident.updatedAt;
     }
 
-    validateBusinessLogic() {
-        if(!(this.status === 'OPEN' || this.status === 'ACK' || this.status === 'CLOSED')) {
-            throw new ValidationError('Status must be OPEN, ACK, or CLOSED');
-        }
-        if(!(this.priority === 'LOW' || this.priority === 'MEDIUM' || this.priority === 'HIGH')) {
-            throw new ValidationError('Priority must be LOW, MEDIUM, or HIGH');
-        }
+    static fromArray(incidentsArray) {
+        return incidentsArray.map(incident => new Incidents(incident));
     }
 }

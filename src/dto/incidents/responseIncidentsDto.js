@@ -8,8 +8,6 @@ export class ResponseIncidentsDto {
         this.roles = incident.roles;
         this.ackAt = incident.ackAt;
         this.closedAt = incident.closedAt;
-        this.createdAt = incident.createdAt;
-        this.updatedAt = incident.updatedAt;
     }
     
     static fromArray(incidents) {

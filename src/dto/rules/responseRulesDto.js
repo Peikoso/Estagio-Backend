@@ -16,8 +16,6 @@ export class ResponseRulesDto {
     this.postponeDate = rule.postponeDate;
     this.isActive = rule.isActive;
     this.userCreatorId = rule.userCreatorId;
-    this.createdAt = rule.createdAt;
-    this.updatedAt = rule.updatedAt;
   }
 
 
