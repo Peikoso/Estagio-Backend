@@ -5,7 +5,7 @@ export const SchedulesRepository = {
     findUpcomingSchedules: async (date) => {
         const selectQuery = 
         `
-        SELECT * FROM schedule
+        SELECT * FROM schedules
         WHERE DATE(start_time) >= $1 
         ORDER BY start_time DESC
         `;
@@ -24,7 +24,7 @@ export const SchedulesRepository = {
     create: async (schedule) => {
         const insertQuery = 
         `
-        INSERT INTO schedule
+        INSERT INTO schedules
         (user_id, channel, start_time, end_time)
         VALUES ($1, $2, $3, $4)
         RETURNING *;
