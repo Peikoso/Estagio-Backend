@@ -1,4 +1,5 @@
 import { ValidationError } from '../../utils/errors.js';
+import { validateTimeFormat } from '../../utils/validations.js';
 
 export class CreateRulesDto {
     constructor(rule) {
@@ -18,12 +19,6 @@ export class CreateRulesDto {
         this.postponeDate = rule.postponeDate;
         this.userCreatorId = rule.userCreatorId?.trim();
     }
-
-    validateTimeFormat(time) {
-        const regex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
-        return regex.test(time);
-    }
-
 
     validate() {
         if(typeof this.name !== 'string' || this.name.trim() === '') {
@@ -50,10 +45,10 @@ export class CreateRulesDto {
         if(isNaN(this.timeoutMs)) {
             throw new ValidationError('Timeout must be a number');
         }
-        if(!this.validateTimeFormat(this.startTime)) {
+        if(!validateTimeFormat(this.startTime)) {
             throw new ValidationError('Start time must be in the format HH:MM:SS');
         }
-        if(!this.validateTimeFormat(this.endTime)) {
+        if(!validateTimeFormat(this.endTime)) {
             throw new ValidationError('End time must be in the format HH:MM:SS');
         }
         if(typeof this.notificationEnabled !== 'boolean') {

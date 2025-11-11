@@ -1,6 +1,6 @@
 import { RoleService } from '../services/roles.js'
-import { CreateRolesDto } from '../dto/roles/createRolesDto.js';
-import { ResponseRolesDto } from '../dto/roles/responseRolesDto.js';
+import { CreateRolesDto } from '../dto/roles/create-roles-dto.js';
+import { ResponseRolesDto } from '../dto/roles/response-roles-dto.js';
 
 
 export const RolesController = {

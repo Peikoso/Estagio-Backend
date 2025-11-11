@@ -1,6 +1,6 @@
 import { IncidentsRepository, IncidentsLogsRepository } from "../repositories/incidents.js";
 import { Incidents, IncidentsLogs } from '../models/incidents.js';
-import { isValidUuid } from "../utils/valid_uuid.js";
+import { isValidUuid } from "../utils/validations.js";
 import { ValidationError, NotFoundError } from "../utils/errors.js";
 import { RoleService } from "./roles.js";
 import { RuleService } from "./rules.js";

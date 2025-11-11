@@ -1,9 +1,9 @@
 import { UsersRepository } from '../repositories/users.js';
-import { ResponseUsersDto } from '../dto/users/responseUsersDto.js';
-import { CreateUsersDto } from '../dto/users/createUsersDto.js';
+import { ResponseUsersDto } from '../dto/users/response-users-dto.js';
+import { CreateUsersDto } from '../dto/users/create-users-dto.js';
 import { Users } from '../models/users.js';
 import { ValidationError, NotFoundError } from '../utils/errors.js';
-import { isValidUuid } from '../utils/valid_uuid.js';
+import { isValidUuid } from '../utils/validations.js';
 import { RoleService } from './roles.js';
 
 export const UserService = {

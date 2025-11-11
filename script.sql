@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS incidents (
 -- ======================================
 -- Tabela schedule (escala/on-call)
 -- ======================================
-CREATE TABLE IF NOT EXISTS schedule (
+CREATE TABLE IF NOT EXISTS schedules (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid NOT NULL,
     channel varchar(30) NOT NULL,

@@ -2,7 +2,7 @@ import { RulesRepository } from '../repositories/rules.js';
 import { Rules } from '../models/rules.js';
 import { RoleService } from './roles.js';
 import { ValidationError, NotFoundError } from '../utils/errors.js';
-import { isValidUuid } from '../utils/valid_uuid.js'
+import { isValidUuid } from '../utils/validations.js'
 import { UserService } from './users.js';
 
 export const RuleService = {

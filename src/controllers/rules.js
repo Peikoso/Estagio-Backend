@@ -1,6 +1,6 @@
 import { RuleService } from '../services/rules.js';
-import { ResponseRulesDto } from '../dto/rules/responseRulesDto.js';
-import { CreateRulesDto } from '../dto/rules/createRulesDto.js';
+import { ResponseRulesDto } from '../dto/rules/response-rules-dto.js';
+import { CreateRulesDto } from '../dto/rules/create-rules-dto.js';
 
 export const RulesController = {
     getAllRules: async (req, res) => {

@@ -1,6 +1,6 @@
 import { IncidentService } from '../services/incidents.js';
-import { CreateIncidentsDto, CreateIncidentsLogsDto } from '../dto/incidents/createIncidentsDto.js';
-import { ResponseIncidentsDto, ResponseIncidentsLogsDto } from '../dto/incidents/responseIncidentsDto.js';
+import { CreateIncidentsDto, CreateIncidentsLogsDto } from '../dto/incidents/create-incidents-dto.js';
+import { ResponseIncidentsDto, ResponseIncidentsLogsDto } from '../dto/incidents/response-incidents-dto.js';
 
 export const IncidentsController = {
     getAllIncidents: async(req, res) => {

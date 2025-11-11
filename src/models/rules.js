@@ -1,5 +1,5 @@
 import { ValidationError } from '../utils/errors.js';
-import { sqlValidantion } from '../utils/sql_validation.js';
+import { sqlValidantion } from '../utils/validations.js';
 
 export class Rules {
     constructor(rule) {

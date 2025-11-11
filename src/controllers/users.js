@@ -1,6 +1,6 @@
 import { UserService } from "../services/users.js";
-import { CreateUsersDto } from "../dto/users/createUsersDto.js";
-import { ResponseUsersDto } from "../dto/users/responseUsersDto.js";
+import { CreateUsersDto } from "../dto/users/create-users-dto.js";
+import { ResponseUsersDto } from "../dto/users/response-users-dto.js";
 
 export const UsersController = {
     getAllUsers: async  (req, res) => {
