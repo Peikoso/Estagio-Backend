@@ -41,7 +41,7 @@ export class Rules {
             throw new ValidationError('Execution interval must be positive');
         }
         if (this.maxErrorCount <= 0) {
-            throw new ValidationError('Max error count cannot be positive');
+            throw new ValidationError('Max error must be positive');
         }
         if (this.timeoutMs <= 0) {
             throw new ValidationError('Timeout must be positive');

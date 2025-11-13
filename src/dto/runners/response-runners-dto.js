@@ -7,7 +7,7 @@ export class ResponseRunnersDto {
         this.next_run_at = runner.nextRunAt;
     }
 
-    fromArray(runnersArray) {   
+    static fromArray(runnersArray) {   
         return runnersArray.map(runner => new ResponseRunnersDto(runner));
     }
 }

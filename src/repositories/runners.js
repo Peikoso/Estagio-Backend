@@ -1,4 +1,4 @@
-import { pool } from '../config/database.js';
+import { pool } from '../config/database-conn.js';
 import { Runners } from '../models/runners.js';
 
 export const RunnersRepository = {
