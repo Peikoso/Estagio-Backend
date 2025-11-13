@@ -1,6 +1,6 @@
 import { RunnerService, RunnerLogService } from '../services/runners.js';
-import { ResponseRunnersDto } from '../dto/runners/response-runners-dto.js';
-import { CreateRunnerLogsDto } from '../dto/runners/create-runners-dto.js';
+import { ResponseRunnersDto, ResponseRunnerLogsDto } from '../dto/runners/response-runners-dto.js';
+import { CreateRunnersDto, CreateRunnerLogsDto } from '../dto/runners/create-runners-dto.js';
 
 export const RunnersController = {
     getAllRunners: async (req, res) => {
@@ -14,9 +14,9 @@ export const RunnersController = {
     createRunner: async (req, res) => {
         const runnerData = req.body;
 
-        const dot = new CreateRunnerLogsDto(runnerData).validate();
+        const dto = new CreateRunnersDto(runnerData).validate();
 
-        const newRunner = await RunnerService.createRunner(dot);
+        const newRunner = await RunnerService.createRunner(dto);
 
         const response = new ResponseRunnersDto(newRunner);
 
@@ -28,7 +28,7 @@ export const RunnerLogsController = {
     getAllRunnersLogs: async (req, res) => {
         const runnersLogs = await RunnerLogService.getAllRunnersLogs();
         
-        const response = ResponseRunnersDto.RunnerLogs.fromArray(runnersLogs);
+        const response = ResponseRunnerLogsDto.fromArray(runnersLogs);
 
         return res.status(200).json(response);
     },
@@ -40,7 +40,7 @@ export const RunnerLogsController = {
 
         const newRunnerLog = await RunnerLogService.createRunnerLog(dto);
 
-        const response = new ResponseRunnersDto.RunnerLogs(newRunnerLog);
+        const response = new ResponseRunnerLogsDto(newRunnerLog);
 
         return res.status(201).json(response);
     }

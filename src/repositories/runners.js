@@ -14,7 +14,7 @@ export const RunnersRepository = {
     },
 
     findById: async (id) => {
-        selectIdQuery = 
+        const selectIdQuery = 
         `
         SELECT * FROM runners
         WHERE id = $1
@@ -39,10 +39,10 @@ export const RunnersRepository = {
         `;
 
         const values = [
-            runner.rule_id,
+            runner.ruleId,
             runner.status,
-            runner.last_run_at,
-            runner.next_run_at
+            runner.lastRunAt,
+            runner.nextRunAt
         ];
 
         const result =  await pool.query(insertRunnerQuery, values);
@@ -56,7 +56,7 @@ export const RunnerLogsRepository = {
         const result = await pool.query(
             `
             SELECT * FROM runner_logs
-            ORDER BY created_at DESC;
+            ORDER BY executed_at DESC;
             `
         );
 
