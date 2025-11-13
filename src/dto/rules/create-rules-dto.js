@@ -21,13 +21,13 @@ export class CreateRulesDto {
     }
 
     validate() {
-        if(typeof this.name !== 'string' || this.name.trim() === '') {
+        if(typeof this.name !== 'string' || this.name === '') {
             throw new ValidationError('Name is required and must be a non-empty string');
         }
-        if(typeof this.description !== 'string' || this.description.trim() === '') {
+        if(typeof this.description !== 'string' || this.description === '') {
             throw new ValidationError('Description is required and must be a non-empty string');
         }
-        if(typeof this.sql !== 'string' || this.sql.trim() === '') {
+        if(typeof this.sql !== 'string' || this.sql === '') {
             throw new ValidationError('SQL is required and must be a non-empty string');
         }
         if(!(this.priority === 'LOW' || this.priority === 'MEDIUM' || this.priority === 'HIGH')) {

@@ -11,3 +11,18 @@ export class ResponseRunnersDto {
         return runnersArray.map(runner => new ResponseRunnersDto(runner));
     }
 }
+
+export class ResponseRunnerLogsDto {
+    constructor(runnerLog){
+        this.id = runnerLog.id;
+        this.runner_id = runnerLog.runnerId;
+        this.run_time_ms = runnerLog.runTimeMs;
+        this.result = runnerLog.result;
+        this.error = runnerLog.error;
+        this.executed_at = runnerLog.executedAt;
+    }
+
+    static fromArray(runnerLogsArray) {
+        return runnerLogsArray.map(runnerLog => new ResponseRunnerLogsDto(runnerLog));
+    }
+};

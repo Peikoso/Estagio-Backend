@@ -1,4 +1,4 @@
-import { ValidationError } from '../utils/errors.js';
+import { BusinessLogicError } from "../utils/errors.js";
 import { sqlValidantion } from '../utils/validations.js';
 
 export class Rules {
@@ -29,22 +29,22 @@ export class Rules {
 
     validateBusinessLogic() {
         if (!sqlValidantion(this.sql)) {
-            throw new ValidationError('SQL contains forbidden commands');
+            throw new BusinessLogicError('SQL contains forbidden commands');
         }
         if (this.startTime >= this.endTime) {
-            throw new ValidationError('Start time must be before end time');
+            throw new BusinessLogicError('Start time must be before end time');
         }
         if (this.postponeDate && this.postponeDate < new Date()) {
-            throw new ValidationError('Postpone date must be in the future');
+            throw new BusinessLogicError('Postpone date must be in the future');
         }
         if (this.executionIntervalMs <= 0) {
-            throw new ValidationError('Execution interval must be positive');
+            throw new BusinessLogicError('Execution interval must be positive');
         }
         if (this.maxErrorCount <= 0) {
-            throw new ValidationError('Max error must be positive');
+            throw new BusinessLogicError('Max error must be positive');
         }
         if (this.timeoutMs <= 0) {
-            throw new ValidationError('Timeout must be positive');
+            throw new BusinessLogicError('Timeout must be positive');
         }
         
         return this;

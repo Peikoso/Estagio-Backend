@@ -1,3 +1,5 @@
+import { BusinessLogicError } from "../utils/errors.js";
+
 export class Runners {
     constructor(runner){
         this.id = runner.id;
@@ -12,6 +14,14 @@ export class Runners {
     static fromArray(runnersArray) {   
         return runnersArray.map(runner => new Runners(runner));
     }
+
+    validateBusinessLogic() {
+        if(this.last_run_at > this.next_run_at) {
+            throw new BusinessLogicError('Last run time must be before next run time');
+        }
+        return this;
+    }
+    
 };
 
 export class RunnerLogs {
@@ -22,6 +32,14 @@ export class RunnerLogs {
         this.result = runnerLog.result;
         this.error = runnerLog.error;
         this.executed_at = runnerLog.executed_at ?? runnerLog.executedAt;
+    }
+
+    validateBusinessLogic() {
+        if(this.run_time_ms <= 0) {
+            throw new BusinessLogicError('Run time must be positive');
+        }
+
+        return this;
     }
 
     static fromArray(runnerLogsArray) {

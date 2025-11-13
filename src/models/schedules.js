@@ -1,3 +1,5 @@
+import { BusinessLogicError } from "../utils/errors.js";
+
 export class Schedules {
     constructor(schedule) {
         this.id = schedule.id;
@@ -15,7 +17,7 @@ export class Schedules {
 
     validateBusinessLogic() {
         if (this.startTime >= this.endTime) {
-            throw new ValidationError('Start time must be before end time');
+            throw new BusinessLogicError('Start time must be before end time');
         }
 
         return this;
