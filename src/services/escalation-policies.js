@@ -1,5 +1,5 @@
-import { EscalationPolicy } from "../models/escalationPolicies.js";
-import { EscalationPoliciesRepository } from "../repositories/escalationPolicies.js";
+import { EscalationPolicy } from "../models/escalation-policies.js";
+import { EscalationPoliciesRepository } from "../repositories/escalation-policies.js";
 import { RoleService } from "./roles.js";
 
 

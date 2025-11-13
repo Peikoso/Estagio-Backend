@@ -1,4 +1,4 @@
-import { pool } from '../config/database_conn.js';
+import { pool } from '../config/database-conn.js';
 import { Roles } from '../models/roles.js';
 
 export const RolesRepository = {

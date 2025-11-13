@@ -1,4 +1,4 @@
-import { pool } from '../config/database_conn.js'
+import { pool } from '../config/database-conn.js'
 import { Incidents, IncidentsLogs } from '../models/incidents.js'
 
 export const IncidentsRepository = {

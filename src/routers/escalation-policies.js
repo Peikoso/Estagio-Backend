@@ -1,5 +1,5 @@
 import express from 'express';
-import { EscalationPoliciesController } from '../controllers/escalationPolicies.js';
+import { EscalationPoliciesController } from '../controllers/escalation-policies.js';
 
 const router = express.Router();
 

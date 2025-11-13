@@ -1,6 +1,6 @@
-import { EscalationPolicyService } from "../services/escalationPolicies.js";
-import { CreateEscalationPolicy } from "../dto/escalation_policies/CreateEscalationPolicies.js";
-import { ResponseEscalationPolicy } from "../dto/escalation_policies/ResponseEscalationPolicies.js";
+import { EscalationPolicyService } from "../services/escalation-policies.js";
+import { CreateEscalationPolicy } from "../dto/escalation_policies/create-escalation-policies.js";
+import { ResponseEscalationPolicy } from "../dto/escalation_policies/response-escalation-policies.js";
 
 export const EscalationPoliciesController = {
     getAllEscalationPolicies: async (req, res) => {

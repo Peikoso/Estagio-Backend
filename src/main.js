@@ -3,8 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import process from 'process';
 import routes from './routers/index.js';
-import { AuthMiddleware } from './middleware/authMiddleware.js';
-import { ErrorMiddleware } from './middleware/errorMiddleware.js';
+import { AuthMiddleware } from './middleware/auth-middleware.js';
+import { ErrorMiddleware } from './middleware/error-middleware.js';
 
 dotenv.config();
 const app = express();

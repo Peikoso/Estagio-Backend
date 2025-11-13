@@ -1,4 +1,4 @@
-import { pool } from '../config/database_conn.js';
+import { pool } from '../config/database-conn.js';
 import { Schedules, ScheduleLogs } from '../models/schedules.js';
 
 export const SchedulesRepository = {

@@ -1,4 +1,4 @@
-import { pool } from '../config/database_conn.js';
+import { pool } from '../config/database-conn.js';
 import { Rules } from '../models/rules.js';
 
 export const RulesRepository = {

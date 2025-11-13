@@ -5,7 +5,7 @@ import usersRouter from './users.js';
 import rolesRouter from './roles.js';
 import incidentsRouter from './incidents.js'
 import schedulesRouter from './schedules.js';
-import escalationPoliciesRouter from './escalationPolicies.js';
+import escalationPoliciesRouter from './escalation-policies.js';
 
 const router = express.Router();
 

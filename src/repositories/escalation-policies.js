@@ -1,5 +1,5 @@
-import { pool } from '../config/database_conn.js';
-import { EscalationPolicy } from '../models/escalationPolicies.js'
+import { pool } from '../config/database-conn.js';
+import { EscalationPolicy } from '../models/escalation-policies.js'
 
 export const EscalationPoliciesRepository = {
     findAll: async () => {
