@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 CREATE TABLE IF NOT EXISTS notifications (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     incident_id uuid NOT NULL,
-    channel_id uuid,
+    channel_id uuid NOT NULL,
     user_id uuid NOT NULL,
     title varchar(150) NOT NULL,
     message text NOT NULL,
@@ -240,7 +240,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     duration_ms integer NOT NULL,
     CONSTRAINT fk_notifications_incident FOREIGN KEY (incident_id) REFERENCES incidents(id) ON DELETE CASCADE,
     CONSTRAINT fk_notifications_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_notifications_channel FOREIGN KEY (channel_id) REFERENCES channels(id) ON DELETE SET NULL
+    CONSTRAINT fk_notifications_channel FOREIGN KEY (channel_id) REFERENCES channels(id) ON DELETE CASCADE
 );
 
 -- ======================================
@@ -289,6 +289,6 @@ CREATE INDEX IF NOT EXISTS idx_runners_rule_id ON runners (rule_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_incident_id ON notifications (incident_id);
 CREATE INDEX IF NOT EXISTS idx_schedules_user_id ON schedules (user_id);
 CREATE INDEX IF NOT EXISTS idx_incidents_status_priority ON incidents(status, priority);
-CREATE INDEX IF NOT EXISTS idx_schedules_channels_channel_id ON schedules_channels (channel_id);
+CREATE INDEX IF NOT EXISTS idx_user_preferences_channels_channel_id ON user_preferences_channels (channel_id);
 CREATE INDEX IF NOT EXISTS idx_rules_roles_role_id ON rules_roles (role_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications (user_id);
