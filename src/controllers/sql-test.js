@@ -1,4 +1,4 @@
-import { SQLTestService } from "../services/sql_test.js";
+import { SQLTestService } from "../services/sql-test.js";
 import { ResponseSQLTestDto } from "../dto/sql_test/response-sql-test-dto.js";
 import { CreateSQLTestDto } from "../dto/sql_test/create-sql-test-dto.js";
 

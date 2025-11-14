@@ -1,5 +1,5 @@
 import { SQLTest } from '../models/sql-test.js';
-import { SQLTestsRepository } from '../repositories/sql_test.js';
+import { SQLTestsRepository } from '../repositories/sql-test.js';
 import { UserService } from './users.js';
 import { ForbiddenError } from '../utils/errors.js';
 
