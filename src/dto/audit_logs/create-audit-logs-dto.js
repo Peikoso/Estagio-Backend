@@ -8,7 +8,6 @@ export class CreateAuditLogsDto {
         this.oldValue = auditLog.oldValue;
         this.newValue = auditLog.newValue;
         this.userId = auditLog.userId?.trim();
-        this.createdAt = auditLog.createdAt;
     }
 
     validate(){

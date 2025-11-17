@@ -11,6 +11,7 @@ import sqlTestsRouter from './sql-test.js';
 import userPreferencesRouter from './user-preferences.js';
 import channelsRouter from './channels.js';
 import notificationsRouter from './notifications.js';
+import auditLogsRouter from './audit-logs.js';
 
 const router = express.Router();
 
@@ -25,5 +26,6 @@ router.use('/sql-tests', sqlTestsRouter);
 router.use('/user-preferences', userPreferencesRouter);
 router.use('/channels', channelsRouter);
 router.use('/notifications', notificationsRouter);
+router.use('/audit-logs', auditLogsRouter);
 
 export default router;

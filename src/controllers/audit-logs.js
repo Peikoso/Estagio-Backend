@@ -1,13 +1,12 @@
-import { AuditLogService } from '../services/audit-log.js';
+import { AuditLogService } from '../services/audit-logs.js';
 import { CreateAuditLogsDto } from '../dto/audit_logs/create-audit-logs-dto.js';
 import { ResponseAuditLogsDto } from '../dto/audit_logs/response-audit-logs-dto.js';
-import { create } from 'domain';
 
 export const AuditLogsController = {
-    getAuditLogs: async (req, res) => {
+    getAllAuditLogs: async (req, res) => {
         const auditLogs = await AuditLogService.getAllAuditLogs();
 
-        const response = auditLogs.map(auditLog => new ResponseAuditLogsDto(auditLog));
+        const response = ResponseAuditLogsDto.fromArray(auditLogs);
 
         return res.status(200).json(response);
     },
