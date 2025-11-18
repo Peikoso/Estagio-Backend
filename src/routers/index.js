@@ -12,6 +12,7 @@ import userPreferencesRouter from './user-preferences.js';
 import channelsRouter from './channels.js';
 import notificationsRouter from './notifications.js';
 import auditLogsRouter from './audit-logs.js';
+import appSettingsRouter from './app-settings.js';
 
 const router = express.Router();
 
@@ -27,5 +28,6 @@ router.use('/user-preferences', userPreferencesRouter);
 router.use('/channels', channelsRouter);
 router.use('/notifications', notificationsRouter);
 router.use('/audit-logs', auditLogsRouter);
+router.use('/app-settings', appSettingsRouter);
 
 export default router;

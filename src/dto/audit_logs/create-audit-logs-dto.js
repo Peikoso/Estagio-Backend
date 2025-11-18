@@ -31,10 +31,10 @@ export class CreateAuditLogsDto {
             throw new ValidationError('Invalid action type for audit log, types must be one of CREATE, UPDATE, DELETE.');
         }
         if (typeof this.newValue !== "object" || !this.newValue) {
-            throw new ValidationError("New value deve ser um objeto JSON");
+            throw new ValidationError("New value must be a JSON object");
         }
         if (typeof this.oldValue !== "object" || !this.oldValue) {
-            throw new ValidationError("Old value deve ser um objeto JSON");
+            throw new ValidationError("Old value must be a JSON object");
         }
         if(typeof this.userId !== 'string' || this.userId === '') {
             throw new ValidationError('User ID is required for audit log.');
