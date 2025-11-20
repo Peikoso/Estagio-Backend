@@ -1,6 +1,6 @@
-import { RunnerService, RunnerLogService } from '../services/runners.js';
-import { ResponseRunnersDto, ResponseRunnerLogsDto } from '../dto/runners/response-runners-dto.js';
-import { CreateRunnersDto, CreateRunnerLogsDto } from '../dto/runners/create-runners-dto.js';
+import { RunnerService, RunnerLogService, RunnerQueueService } from '../services/runners.js';
+import { ResponseRunnersDto, ResponseRunnerLogsDto, ResponseRunnerQueueDto } from '../dto/runners/response-runners-dto.js';
+import { CreateRunnersDto, CreateRunnerLogsDto, CreateRunnerQueueDto } from '../dto/runners/create-runners-dto.js';
 
 export const RunnersController = {
     getAllRunners: async (req, res) => {
@@ -22,13 +22,45 @@ export const RunnersController = {
 
         return res.status(201).json(response);
     }
-}
+};
+
+export const RunnerQueueController = {
+    getAllRunnerQueue: async (req, res) => {
+        const runnerQueue = await RunnerQueueService.getAllRunnerQueue();
+
+        const response = ResponseRunnerQueueDto.fromArray(runnerQueue);
+
+        return res.status(200).json(response);
+    },
+
+    createRunnerQueue: async (req, res) => {
+        const runnerQueueData = req.body;
+
+        const dto = new CreateRunnerQueueDto(runnerQueueData).validate();
+
+        const newRunnerQueue = await RunnerQueueService.createRunnerQueue(dto);
+
+        const response = new ResponseRunnerQueueDto(newRunnerQueue);
+
+        return res.status(201).json(response);
+    }
+};
 
 export const RunnerLogsController = {
     getAllRunnersLogs: async (req, res) => {
         const runnersLogs = await RunnerLogService.getAllRunnersLogs();
         
         const response = ResponseRunnerLogsDto.fromArray(runnersLogs);
+
+        return res.status(200).json(response);
+    },
+
+    getRunnerLogsByRunnerId: async (req, res) => {
+        const runnerId = req.params.id;
+
+        const runnerLogs = await RunnerLogService.getRunnerLogsByRunnerId(runnerId);
+
+        const response = ResponseRunnerLogsDto.fromArray(runnerLogs);
 
         return res.status(200).json(response);
     },
@@ -44,4 +76,4 @@ export const RunnerLogsController = {
 
         return res.status(201).json(response);
     }
-}
+};

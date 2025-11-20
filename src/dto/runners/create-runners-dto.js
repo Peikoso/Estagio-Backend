@@ -28,10 +28,32 @@ export class CreateRunnersDto {
     
 };
 
+export class CreateRunnerQueueDto {
+    constructor(runnerQueue){
+        this.runnerId = runnerQueue.runnerId?.trim();
+        this.scheduledFor = runnerQueue.scheduledFor;
+    }
+
+    validate() {
+        if(typeof this.runnerId !== 'string' || this.runnerId === '') {
+            throw new ValidationError('Runner id is required and must be a non-empty string');
+        }
+        if(!validateTimestampFormat(this.scheduledFor)) {
+            throw new ValidationError('Scheduled for must be in the format YYYY-MM-DDTHH:MM:SS.sssZ');
+        }
+
+        return this;
+    }
+
+};
+
 export class CreateRunnerLogsDto {
     constructor(runnerLog){
         this.runnerId = runnerLog.runnerId?.trim();
+        this.queueId = runnerLog.queueId?.trim();
         this.runTimeMs = Number(runnerLog.runTimeMs);
+        this.executionStatus = runnerLog.executionStatus?.trim();
+        this.rowsAffected = Number(runnerLog.rowsAffected);
         this.result = runnerLog.result?.trim();
         this.error = runnerLog.error?.trim();
         this.executedAt = runnerLog.executedAt;
@@ -41,8 +63,17 @@ export class CreateRunnerLogsDto {
         if (typeof this.runnerId !== 'string' || this.runnerId === '') {
             throw new ValidationError('Runner id is required and must be a non-empty string');
         }
+        if (typeof this.queueId !== 'string' || this.queueId === '') {
+            throw new ValidationError('Queue id is required and must be a non-empty string');
+        }
         if (isNaN(this.runTimeMs) || !Number.isInteger(this.runTimeMs)) {
             throw new ValidationError('Run time must be a integer number');
+        }
+        if (this.executionStatus !== 'SUCCESS' || this.executionStatus !== 'TIMEOUT' || this.executionStatus !== 'ERROR') {
+            throw new ValidationError('Execution status must be either SUCCESS. TIMEOUT or ERROR');
+        }
+        if (isNaN(this.rowsAffected) || !Number.isInteger(this.rowsAffected)) {
+            throw new ValidationError('Rows affected must be a integer number');
         }
         if (typeof this.result !== 'string' || this.result === '') {
             throw new ValidationError('Result is required and must be a non-empty string');

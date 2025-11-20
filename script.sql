@@ -181,7 +181,7 @@ CREATE TABLE IF NOT EXISTS runners (
 );
 
 -- ======================================
--- Tabela runner_queue // NOVO 
+-- Tabela runner_queue
 -- ======================================
 CREATE TABLE IF NOT EXISTS runner_queue (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -196,7 +196,7 @@ CREATE TABLE IF NOT EXISTS runner_queue (
 );
 
 -- ======================================
--- Tabela runner_logs // alterado ajeitar back
+-- Tabela runner_logs
 -- ======================================
 CREATE TABLE IF NOT EXISTS runner_logs (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -299,3 +299,42 @@ CREATE INDEX IF NOT EXISTS idx_user_preferences_channels_channel_id ON user_pref
 CREATE INDEX IF NOT EXISTS idx_rules_roles_role_id ON rules_roles (role_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications (user_id);
 CREATE INDEX IF NOT EXISTS idx_runner_queue_status_scheduled  ON runner_queue (status, scheduled_for) WHERE status = 'PENDING';
+
+-- ======================================
+-- Views dashboard
+-- ======================================
+CREATE OR REPLACE VIEW plantao_monitor AS
+WITH base AS (
+    SELECT
+        i.id,
+        i.status,
+        i.created_at,
+        i.ack_at,
+        i.closed_at
+    FROM incidents i
+)
+SELECT
+    -- Contagens por status
+    (SELECT COUNT(*) FROM base WHERE status = 'OPEN') AS total_open,
+
+    (SELECT COUNT(*) FROM base WHERE status = 'ACK') AS total_ack,
+
+    (SELECT COUNT(*) FROM base WHERE status = 'CLOSED') AS total_closed,
+
+    -- Regras ativas
+    (SELECT COUNT(*) FROM rules r WHERE r.is_active = true) AS total_rules_active,
+
+    -- Tempo Médio de ACK (em segundos)
+    (
+        SELECT AVG(EXTRACT(EPOCH FROM (ack_at - created_at)))
+        FROM base 
+        WHERE ack_at IS NOT NULL
+    ) AS avg_ack_time_seconds,
+
+    -- Tempo Médio de Resolução (ACK → CLOSED)
+    (
+        SELECT AVG(EXTRACT(EPOCH FROM (closed_at - ack_at)))
+        FROM base
+        WHERE ack_at IS NOT NULL
+          AND closed_at IS NOT NULL
+    ) AS avg_resolution_time_seconds;
