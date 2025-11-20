@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- ======================================
--- Tabela user_preferences // ALTERADA MUDAR BACK
+-- Tabela user_preferences
 -- ======================================
 CREATE TABLE IF NOT EXISTS user_preferences (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

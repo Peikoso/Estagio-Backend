@@ -5,10 +5,23 @@ export const UsersRepository = {
     findAll: async () => {
         const result = await pool.query(
             `
-            SELECT u.*, array_remove(array_agg(ur.role_id), NULL) AS roles 
+            SELECT 
+                u.*, 
+                COALESCE(
+                    jsonb_agg(
+                        jsonb_build_object(
+                            'id', r.id,
+                            'name', r.name,
+                            'color', r.color
+                        )
+                    ) FILTER (WHERE r.id IS NOT NULL),
+                     '[]'::jsonb
+                ) AS roles 
             FROM users u 
             LEFT JOIN users_roles ur
-            ON u.id = ur.user_id 
+                ON u.id = ur.user_id
+            LEFT JOIN roles r
+                ON ur.role_id = r.id
             GROUP BY u.id
             ORDER BY created_at DESC;
             `
@@ -21,10 +34,23 @@ export const UsersRepository = {
     findById: async (id) => {
         const selectIdQuery = 
         `
-        SELECT u.*, array_remove(array_agg(ur.role_id), NULL) AS roles
-        FROM users u
+        SELECT 
+            u.*, 
+            COALESCE(
+                jsonb_agg(
+                    jsonb_build_object(
+                        'id', r.id,
+                        'name', r.name,
+                        'color', r.color
+                    )
+                ) FILTER (WHERE r.id IS NOT NULL),
+                    '[]'::jsonb
+            ) AS roles 
+        FROM users u 
         LEFT JOIN users_roles ur
-        ON u.id = ur.user_id
+            ON u.id = ur.user_id
+        LEFT JOIN roles r
+            ON ur.role_id = r.id
         WHERE u.id = $1
         GROUP BY u.id;
         `

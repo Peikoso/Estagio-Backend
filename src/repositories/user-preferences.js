@@ -6,10 +6,23 @@ export const UserPreferencesRepository = {
     getByUserId: async (id) => {
         const selectIdQuery = 
         `
-        SELECT up.*, array_remove(array_agg(uc.channel_id), NULL) AS channels
+        SELECT 
+            up.*, 
+            COALESCE(
+                jsonb_agg(
+                    jsonb_build_object(
+                        'id', c.id,
+                        'type', c.type,
+                        'name', c.name
+                    )
+                ) FILTER (WHERE c.id IS NOT NULL AND c.is_active = TRUE),
+                '[]'::jsonb
+            ) AS channels
         FROM user_preferences up
         LEFT JOIN user_preferences_channels uc 
-        ON up.id = uc.user_preferences_id
+            ON up.id = uc.user_preferences_id
+        LEFT JOIN channels c
+            ON uc.channel_id = c.id
         WHERE up.user_id = $1
         GROUP BY up.id
         `;
@@ -31,8 +44,8 @@ export const UserPreferencesRepository = {
 
             const insertIdQuery = 
             `INSERT INTO user_preferences 
-            (user_id, dnd_start_time, dnd_end_time, push_enabled, push_sound_enabled) 
-            VALUES ($1, $2, $3, $4, $5) 
+            (user_id, dnd_start_time, dnd_end_time) 
+            VALUES ($1, $2, $3) 
             RETURNING *
             `;
 
@@ -40,8 +53,6 @@ export const UserPreferencesRepository = {
                 userPreferences.userId,
                 userPreferences.dndStartTime,
                 userPreferences.dndEndTime,
-                userPreferences.pushEnabled,
-                userPreferences.pushSoundEnabled
             ]
 
             const userPreferencesDb = await client.query(insertIdQuery, values);

@@ -49,11 +49,11 @@ export const IncidentsRepository = {
             ) AS roles
         FROM incidents i
         LEFT JOIN rules r 
-        ON i.rule_id = r.id
+            ON i.rule_id = r.id
         LEFT JOIN rules_roles rr
-        ON r.id = rr.rule_id
+            ON r.id = rr.rule_id
         LEFT JOIN roles ro
-        ON rr.role_id = ro.id
+            ON rr.role_id = ro.id
         WHERE i.id = $1
         GROUP BY i.id
         
