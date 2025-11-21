@@ -6,6 +6,7 @@ export class ResponseNotificationsDto {
         this.userId = notification.userId;
         this.title = notification.title;
         this.message = notification.message;
+        this.status = notification.status;
     }
 
     static fromArray(notificationsArray) {

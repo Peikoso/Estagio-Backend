@@ -8,7 +8,10 @@ export class Notifications {
         this.userId = notification.user_id ?? notification.userId;
         this.title = notification.title;
         this.message = notification.message;
-        this.durationMs = notification.duration_ms ?? notification.durationMs;
+        this.sentAt = notification.sent_at ?? notification.sentAt;
+        this.status = notification.status;
+        this.readAt = notification.read_at ?? notification.readAt;
+        this.error = notification.error;
         this.createdAt = notification.created_at ?? notification.createdAt;
     }
 
@@ -16,11 +19,4 @@ export class Notifications {
         return notificationsArray.map(notification => new Notifications(notification));
     }
 
-    validateBusinessLogic() {
-        if(this.durationMs <= 0) {
-            throw new BusinessLogicError('Duration must be a positive integer number');
-        }
-
-        return this;
-    }
 };

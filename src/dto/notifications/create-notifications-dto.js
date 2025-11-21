@@ -1,4 +1,5 @@
 import { ValidationError } from "../../utils/errors.js";
+import { validateTimestampFormat } from "../../utils/validations.js";
 
 export class CreateNotificationsDto { 
     constructor(notification){
@@ -7,7 +8,8 @@ export class CreateNotificationsDto {
         this.userId = notification.userId?.trim();
         this.title = notification.title?.trim();
         this.message = notification.message?.trim();
-        this.durationMs = Number(notification.durationMs);
+        this.sentAt = notification.sentAt;
+        this.status = notification.status?.trim();
         this.createdAt = notification.createdAt;
     }
 
@@ -27,8 +29,11 @@ export class CreateNotificationsDto {
         if(typeof this.message !== 'string' || this.message === '') {
             throw new ValidationError('Message is required and must be a non-empty string');
         }
-        if(isNaN(this.durationMs) || !Number.isInteger(this.durationMs)) {
-            throw new ValidationError('Duration must be a integer number');
+        if(!validateTimestampFormat(this.sentAt)) {
+            throw new ValidationError('SentAt must be in a valid timestamp format');
+        }
+        if(this.status !== 'SENT' || this.status !== 'READED' || this.status !== 'FAILED') {
+            throw new ValidationError('Status must be one of the following values: SENT, READED, FAILED');
         }
 
         return this;

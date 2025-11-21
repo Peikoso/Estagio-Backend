@@ -14,8 +14,8 @@ export const NotificationsRepository = {
         const insertQuery = 
         `
         INSERT INTO notifications
-        (user_id, channel_id, incident_id, title, message, duration_ms)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        (user_id, channel_id, incident_id, title, message, status, sent_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING *;
         `;
         const values = [
@@ -24,7 +24,8 @@ export const NotificationsRepository = {
             notification.incidentId,
             notification.title,
             notification.message,
-            notification.durationMs
+            notification.sentAt,
+            notification.status,
         ];
 
         const result = await pool.query(insertQuery, values);

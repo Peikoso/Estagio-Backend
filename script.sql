@@ -228,7 +228,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 );
 
 -- ======================================
--- Tabela notifications // alterado ajeitar back
+-- Tabela notifications
 -- ======================================
 CREATE TABLE IF NOT EXISTS notifications (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -237,9 +237,8 @@ CREATE TABLE IF NOT EXISTS notifications (
     user_id uuid NOT NULL,
     title varchar(150) NOT NULL,
     message text NOT NULL,
-    duration_ms integer NOT NULL,
     sent_at timestamp,
-    status varchar(20), -- QUEUED, SENT, DELIVERED, FAILED
+    status varchar(20), -- SENT, READED, FAILED
     read_at timestamp,
     error text, 
     created_at timestamp NOT NULL DEFAULT now(),
