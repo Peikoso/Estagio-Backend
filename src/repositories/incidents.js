@@ -2,32 +2,46 @@ import { pool } from '../config/database-conn.js'
 import { Incidents, IncidentsLogs } from '../models/incidents.js'
 
 export const IncidentsRepository = {
-    findAll: async () => {
-        const result = await pool.query(
-            `
-            SELECT 
-                i.*,     
-                COALESCE(
-                    jsonb_agg(
-                        jsonb_build_object(
-                            'id', ro.id,
-                            'name', ro.name,
-                            'color', ro.color
-                        )
-                    ) FILTER (WHERE ro.id IS NOT NULL),
-                    '[]'::jsonb
-                ) AS roles
-            FROM incidents i
-            LEFT JOIN rules r 
+    findAll: async (status, rule_id, priority, limit, offset) => {
+        const selectQuery = 
+        `
+        SELECT 
+            i.*,     
+            COALESCE(
+                jsonb_agg(
+                    jsonb_build_object(
+                        'id', ro.id,
+                        'name', ro.name,
+                        'color', ro.color
+                    )
+                ) FILTER (WHERE ro.id IS NOT NULL),
+                '[]'::jsonb
+            ) AS roles
+        FROM incidents i
+        LEFT JOIN rules r 
             ON i.rule_id = r.id
-            LEFT JOIN rules_roles rr
+        LEFT JOIN rules_roles rr
             ON r.id = rr.rule_id
-            LEFT JOIN roles ro
+        LEFT JOIN roles ro
             ON rr.role_id = ro.id
-            GROUP BY i.id
-            ORDER BY created_at DESC;
-            `
-        );
+        WHERE 
+            ($1::varchar IS NULL OR i.status = $1)
+            AND ($2::uuid IS NULL OR i.rule_id = $2)
+            AND ($3::varchar IS NULL OR i.priority = $3)
+        GROUP BY i.id
+        ORDER BY i.created_at DESC
+        LIMIT $4 OFFSET $5;
+        `
+
+        const values = [
+            status || null,
+            rule_id || null,
+            priority || null,
+            limit,
+            offset
+        ];
+
+        const result = await pool.query(selectQuery, values);
 
         return Incidents.fromArray(result.rows);
     },

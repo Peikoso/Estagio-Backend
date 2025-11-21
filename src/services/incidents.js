@@ -9,8 +9,18 @@ import { pool } from "../config/database-conn.js";
 
 
 export const IncidentService = {
-    getAllIncidents: async () => {
-        const incidents = await IncidentsRepository.findAll();
+    getAllIncidents: async (status, rule_id, priority, page, per_page) => {
+        const pageNumber = parseInt(page) > 0 ? parseInt(page) : 1;
+        const limit = parseInt(per_page) > 0 ? parseInt(per_page) : 10;
+        const offset = (pageNumber - 1) * limit;
+
+        const incidents = await IncidentsRepository.findAll(
+            status, 
+            rule_id, 
+            priority, 
+            limit,
+            offset
+        );
 
         return incidents;
     },
