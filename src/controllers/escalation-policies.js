@@ -21,5 +21,26 @@ export const EscalationPoliciesController = {
         const response = new ResponseEscalationPolicy(newEscalationPolicy);
 
         return res.status(201).json(response);
-    }
+    },
+
+    updateEscalationPolicy: async (req, res) => {
+        const id = req.params.id;
+        const escalationPolicyData = req.body;
+
+        const dto = new CreateEscalationPolicy(escalationPolicyData).validate();
+
+        const updatedEscalationPolicy = await EscalationPolicyService.updateEscalationPolicy(id, dto);
+
+        const response = new ResponseEscalationPolicy(updatedEscalationPolicy);
+
+        return res.status(200).json(response);
+    },
+
+    deleteEscalationPolicy: async (req, res) => {
+        const id = req.params.id;
+
+        await EscalationPolicyService.deleteEscalationPolicy(id);
+
+        return res.status(204).send();
+    },
 };
