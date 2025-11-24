@@ -49,5 +49,40 @@ export const SchedulesRepository = {
         const result = await pool.query(insertQuery, values);
 
         return new Schedules(result.rows[0]);
+    },
+
+    update: async (schedule) => {
+        const updateQuery = 
+        `
+        UPDATE schedules
+        SET user_id = $1,
+            start_time = $2,
+            end_time = $3,
+            updated_at = $4
+        WHERE id = $5
+        RETURNING *;
+        `;
+
+        const values = [
+            schedule.userId,
+            schedule.startTime,
+            schedule.endTime,
+            schedule.updatedAt,
+            schedule.id
+        ];
+
+        const result = await pool.query(updateQuery, values);
+
+        return new Schedules(result.rows[0]);
+    },
+
+    delete: async (id) => {
+        const deleteQuery = 
+        `
+        DELETE FROM schedules
+        WHERE id = $1;
+        `;
+        
+        await pool.query(deleteQuery, [id]);
     }
 };

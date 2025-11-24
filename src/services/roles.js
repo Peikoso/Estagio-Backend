@@ -34,21 +34,13 @@ export const RoleService = {
     },
 
     updateRole: async (id, dto) => {
-        if(!isValidUuid(id)){
-            throw new ValidationError('Invalid Role UUID.');
-        }
+        const existingRole = await RoleService.getRoleById(id);
 
-        const existingRole = await RolesRepository.findById(id);
-
-        if(!existingRole){
-            throw new NotFoundError('Role not found.');
-        }
-
-        const updatedRole = {
+        const updatedRole = new Roles({
             ...existingRole,
             ...dto,
             updatedAt: new Date()
-        };
+        });
 
         const savedRole = await RolesRepository.update(updatedRole);
 
@@ -56,16 +48,8 @@ export const RoleService = {
     },
 
     deleteRole: async (id) => {
-        if(!isValidUuid(id)){
-            throw new ValidationError('Invalid Role UUID.');
-        }
-
-        const existingRole = await RolesRepository.findById(id);
-
-        if(!existingRole){
-            throw new NotFoundError('Role not found.');
-        }
-
+        await RoleService.getRoleById(id);
+        
         await RolesRepository.delete(id);
     }
 };

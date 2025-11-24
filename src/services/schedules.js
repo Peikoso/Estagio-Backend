@@ -40,11 +40,18 @@ export const ScheduleService = {
 
         const updatedScheduleEntity  = new Schedules({
             ...existingSchedule,
-            ...dto
+            ...dto,
+            updatedAt: new Date()
         }).validateBusinessLogic();
 
-        const savedSchedule = await SchedulesRepository.update(id, updatedScheduleEntity);
+        const updatedSchedule = await SchedulesRepository.update(id, updatedScheduleEntity);
 
-        return savedSchedule;
+        return updatedSchedule;
+    },
+
+    deleteSchedule: async (id) => {
+        await ScheduleService.getScheduleById(id);
+
+        await SchedulesRepository.delete(id);
     }
 };

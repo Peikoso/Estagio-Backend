@@ -47,25 +47,17 @@ export const UserService = {
     },
 
     adminUpdateUser: async (id, dto) => {
-        if(!isValidUuid(id)){
-            throw new ValidationError('Invalide User UUID.')
-        }
-
-        const existingUser = await UsersRepository.findById(id);
-
-        if(!existingUser){
-            throw new NotFoundError('User not found.')
-        }
+        const existingUser = await UserService.getUserById(id);
 
         for(const roleId of dto.roles){
             await RoleService.getRoleById(roleId);
         }
 
-        const updatedUser = {
+        const updatedUser = new Users({
             ...existingUser,
             ...dto,
             updatedAt: new Date(),
-        };
+        });
 
         const savedUser = await UsersRepository.update(updatedUser);
 
@@ -73,21 +65,13 @@ export const UserService = {
     },
 
     userUpdateSelf: async (id, dto) => {
-        if(!isValidUuid(id)){
-            throw new ValidationError('Invalide User UUID.')
-        }
+        const existingUser = await UserService.getUserById(id);
 
-        const existingUser = await UsersRepository.findById(id);
-
-        if(!existingUser){
-            throw new NotFoundError('User not found.')
-        }
-
-        const updatedUser = {
+        const updatedUser = new Users({
             ...existingUser,
             ...dto,
             updatedAt: new Date(),
-        };
+        });
 
         const savedUser = await UsersRepository.update(updatedUser);
 
@@ -95,15 +79,7 @@ export const UserService = {
     },
 
     deleteUser: async (id) => {
-        if(!isValidUuid(id)){
-            throw new ValidationError('Invalide User UUID.')
-        }
-
-        const existingUser = await UsersRepository.findById(id);
-
-        if(!existingUser){
-            throw new NotFoundError('User not found.')
-        }
+        await UserService.getUserById(id);
 
         await UsersRepository.delete(id);
     },

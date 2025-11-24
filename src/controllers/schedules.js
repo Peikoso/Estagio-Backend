@@ -33,5 +33,26 @@ export const SchedulesController = {
         const response = new ResponseSchedulesDto(newSchedule);
 
         return res.status(201).json(response);
+    },
+
+    updateSchedule: async(req, res) => {
+        const id = req.params.id;
+        const scheduleData = req.body;
+
+        const dto = new CreateSchedulesDto(scheduleData).validate();
+
+        const updatedSchedule = await ScheduleService.updateSchedule(id, dto);
+
+        const response = new ResponseSchedulesDto(updatedSchedule);
+
+        return res.status(200).json(response);
+    },
+
+    deleteSchedule: async(req, res) => {
+        const id = req.params.id;
+
+        await ScheduleService.deleteSchedule(id);
+
+        return res.status(204).send();
     }
 };
