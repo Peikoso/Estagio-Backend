@@ -25,7 +25,16 @@ export function validateTimeFormat(time) {
 
 export function validateTimestampFormat(timestamp) {
   const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?$/;
-  return regex.test(timestamp);
+  if (!regex.test(timestamp)) {
+    return false;
+  }
+
+  const date = new Date(timestamp);
+  if (isNaN(date.getTime())) {
+    return false;
+  }
+
+  return true;
 }
 
 
