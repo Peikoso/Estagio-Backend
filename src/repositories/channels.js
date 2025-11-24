@@ -48,4 +48,41 @@ export const ChannelsRepository = {
 
         return new Channels(response.rows[0]);
     },
+
+    update: async (channel) => {
+        const updateQuery = 
+        `
+        UPDATE channels
+        SET type = $1,
+            name = $2,
+            config = $3,
+            is_active = $4,
+            updated_at = $5
+        WHERE id = $6
+        RETURNING *
+        `;
+
+        const values = [
+            channel.type,
+            channel.name,
+            channel.config,
+            channel.isActive,
+            channel.updatedAt,
+            channel.id,
+        ];
+
+        const response = await pool.query(updateQuery, values);
+
+        return new Channels(response.rows[0]);
+    },
+
+    delete: async (id) => {
+        const deleteQuery = 
+        `
+        DELETE FROM channels
+        WHERE id = $1
+        `;
+        
+        await pool.query(deleteQuery, [id]);
+    }
 };

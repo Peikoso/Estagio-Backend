@@ -33,10 +33,22 @@ export const ChannelService = {
     },
 
     updateChannel: async (id, dto) => {
-        throw new ForbiddenError("Not implemented.");
+        const existingChannel = await ChannelService.getChannelById(id);
+
+        const updatedChannel = new Channels({
+            ...existingChannel,
+            ...dto,
+            updatedAt: new Date(),
+        });
+
+        const savedChannel = await ChannelsRepository.update(updatedChannel);
+
+        return savedChannel;
     },
 
     deleteChannel: async (id) => {
-        throw new ForbiddenError("Not implemented.");
+        await ChannelService.getChannelById(id);
+
+        await ChannelsRepository.delete(id);
     },
 };
