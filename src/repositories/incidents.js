@@ -47,7 +47,8 @@ export const IncidentsRepository = {
             rule_id || null,
             priority || null,
             limit,
-            offset
+            offset,
+            null // future admin see all incidents filter
         ];
 
         const result = await pool.query(selectQuery, values);
