@@ -15,9 +15,4 @@ export class UserPreferences {
         return preferencesArray.map((preferences) => new UserPreferences(preferences));
     }
     
-    validateBusinessLogic() {
-        if (this.dndStartTime >= this.dndEndTime) {
-            throw new BusinessLogicError('DND start time must be before DND end time');
-        }
-    }
 };

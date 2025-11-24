@@ -4,9 +4,9 @@ import { UserPreferenceService } from "../services/user-preferences.js";
 
 export const UserPreferencesController = {
     getUserPreferences: async (req, res) => {
-        const id = req.params.id;
+        const userId = req.params.userId;
 
-        const userPreferences = await UserPreferenceService.getUserPreferences(id);
+        const userPreferences = await UserPreferenceService.getUserPreferences(userId);
 
         const response = new ResponseUserPreferencesDto(userPreferences);
 
@@ -26,13 +26,11 @@ export const UserPreferencesController = {
     },
 
     updateUserPreferences: async (req, res) => {
-        const id = req.params.id;
-
         const preferencesData = req.body;
 
         const dto = new CreateUserPreferencesDto(preferencesData).validate();
 
-        const updatedUserPreferences = await UserPreferenceService.updateUserPreferences(id, dto);
+        const updatedUserPreferences = await UserPreferenceService.updateUserPreferences(dto);
 
         const response = new ResponseUserPreferencesDto(updatedUserPreferences);
 
@@ -41,9 +39,9 @@ export const UserPreferencesController = {
     },
 
     deleteUserPreferences: async (req, res) => {
-        const id = req.params.id;
+        const userId = req.params.userId;
 
-        await UserPreferenceService.deleteUserPreferences(id);
+        await UserPreferenceService.deleteUserPreferences(userId);
 
         return res.status(204).send();
     },

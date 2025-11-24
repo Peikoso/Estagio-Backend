@@ -1,6 +1,6 @@
 import { UserPreferences } from "../models/user-preferences.js"
 import { UserPreferencesRepository } from "../repositories/user-preferences.js"
-import { ForbiddenError, NotFoundError, BusinessLogicError } from "../utils/errors.js";
+import { ValidationError, NotFoundError, BusinessLogicError } from "../utils/errors.js";
 import { UserService} from "./users.js";
 import { ChannelService } from "./channels.js"; 
 import { isValidUuid } from "../utils/validations.js";
@@ -21,7 +21,7 @@ export const UserPreferenceService = {
     },
 
     createUserPreference: async (dto) => {
-        const newUserPreference = new UserPreferences(dto).validateBusinessLogic();
+        const newUserPreference = new UserPreferences(dto);
 
         await UserService.getUserById(newUserPreference.userId);
 
@@ -39,12 +39,28 @@ export const UserPreferenceService = {
         return savedUserPreference;
     },
 
-    updateUserPreferences: async (id, dto) => {
-        throw new ForbiddenError("Not implemented.");
+    updateUserPreferences: async (dto) => {
+        const existingPreference = await UserPreferenceService.getUserPreferences(dto.userId);
+
+        for (const channelId of dto.channels) {
+            await ChannelService.getChannelById(channelId);
+        }
+
+        const updatedUserPreferences = new UserPreferences({
+            ...existingPreference,
+            ...dto,
+            updatedAt: new Date(),
+        });
+
+        const savedUserPreferences = await UserPreferencesRepository.update(updatedUserPreferences);
+
+        return savedUserPreferences;
     },
 
-    deleteUserPreferences: async (id) => {
-        throw new ForbiddenError("Not implemented.");
+    deleteUserPreferences: async (userId) => {
+        await UserPreferenceService.getUserPreferences(userId);
+
+        await UserPreferencesRepository.delete(userId);
     },
     
 };
