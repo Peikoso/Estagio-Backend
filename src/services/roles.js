@@ -31,5 +31,41 @@ export const RoleService = {
         const savedRole = await RolesRepository.create(newRole);
 
         return savedRole;
+    },
+
+    updateRole: async (id, dto) => {
+        if(!isValidUuid(id)){
+            throw new ValidationError('Invalid Role UUID.');
+        }
+
+        const existingRole = await RolesRepository.findById(id);
+
+        if(!existingRole){
+            throw new NotFoundError('Role not found.');
+        }
+
+        const updatedRole = {
+            ...existingRole,
+            ...dto,
+            updatedAt: new Date()
+        };
+
+        const savedRole = await RolesRepository.update(updatedRole);
+
+        return savedRole;
+    },
+
+    deleteRole: async (id) => {
+        if(!isValidUuid(id)){
+            throw new ValidationError('Invalid Role UUID.');
+        }
+
+        const existingRole = await RolesRepository.findById(id);
+
+        if(!existingRole){
+            throw new NotFoundError('Role not found.');
+        }
+
+        await RolesRepository.delete(id);
     }
 };

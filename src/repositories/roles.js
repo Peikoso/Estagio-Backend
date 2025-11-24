@@ -29,7 +29,7 @@ export const RolesRepository = {
         return new Roles(result.rows[0]);
     },
 
-    create: async(roleData) =>{
+    create: async(roleData) => {
         const insertRoleQuery = 
         `
         INSERT INTO roles
@@ -47,5 +47,40 @@ export const RolesRepository = {
         const roleDB = await pool.query(insertRoleQuery, values);
 
         return new Roles(roleDB.rows[0]);
+    },
+
+    update: async(roleData) => {
+        const updateRoleQuery = 
+        `
+        UPDATE roles
+        SET name = $1,
+            color = $2,
+            description = $3,
+            updated_at = $4
+        WHERE id = $5
+        RETURNING *;
+        `;
+
+        const values = [
+            roleData.name,
+            roleData.color,
+            roleData.description,
+            roleData.updatedAt, 
+            roleData.id
+        ];
+
+        const roleDB = await pool.query(updateRoleQuery, values);
+
+        return new Roles(roleDB.rows[0]);
+    },
+
+    delete: async (id) => {
+        const deleteRoleQuery =
+        `
+        DELETE FROM roles
+        WHERE id = $1;
+        `;
+
+        await pool.query(deleteRoleQuery, [id]);
     }
 };
