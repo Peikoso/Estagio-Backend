@@ -1,7 +1,7 @@
 export class ResponseUsersDto {
     constructor(user){
         this.id = user.id;
-        this.firebase_uid = user.firebase_uid;
+        this.firebaseId = user.firebaseId;
         this.name = user.name;
         this.matricula = user.matricula;
         this.email = user.email;

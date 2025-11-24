@@ -1,7 +1,8 @@
 import { ValidationError } from '../../utils/errors.js';
 
-export class CreateUsersDto {
+export class AdminUpdateUsersDto {
     constructor(user){
+        this.firebaseId = user.firebaseId?.trim();
         this.name = user.name?.trim();
         this.matricula = user.matricula?.trim();
         this.email = user.email?.trim();
@@ -10,10 +11,12 @@ export class CreateUsersDto {
     }
 
     validate() {
-        const CELULAR_REGEX = /^(?:\+55\s?)?(?:\(?\d{2}\)?\s?)?(?:9\d{4}[-]?\d{4})$/;
         const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const NAME_REGEX = /^[A-Za-zÀ-ÿ]+(?:\s[A-Za-zÀ-ÿ]+)*$/;
-
+        
+        if(!this.firebaseId || typeof this.firebaseId !== 'string') {
+            throw new ValidationError('Firebase ID is required and must be a string');
+        }
         if(typeof this.name !== 'string' || this.name.trim() === '') {
             throw new ValidationError('Name is required and must be a non-empty string');
         }
@@ -29,11 +32,54 @@ export class CreateUsersDto {
         if (!NAME_REGEX.test(this.name)){
             throw new ValidationError('Invalid name format');
         }
+        if(this.firebaseId.length > 128 ){
+            throw new ValidationError('Firebase ID cannot exceed 128 characters');
+        }
         if(this.name.length > 100 ){
             throw new ValidationError('Name cannot exceed 100 characters');
         }
         if(this.matricula.length > 30 ){
             throw new ValidationError('Matricula cannot exceed 30 characters');
+        }
+        if(!EMAIL_REGEX.test(this.email)){
+            throw new ValidationError('Invalid email format');
+        }
+        if(this.email.length > 120 ){
+            throw new ValidationError('Email cannot exceed 120 characters');
+        }
+        if(!(this.profile === 'admin' || this.profile === 'operator' || this.profile === 'viewer')){
+            throw new ValidationError('Profile must be admin, operator, or viewer');
+        }
+
+        return this;
+    }
+};
+
+export class UpdateUsersDto {
+    constructor(user){
+        this.name = user.name?.trim();
+        this.email = user.email?.trim();
+        this.phone = user.phone?.trim();
+        this.picture = user.picture?.trim();
+    }
+
+    validate() {
+        const CELULAR_REGEX = /^(?:\+55\s?)?(?:\(?\d{2}\)?\s?)?(?:9\d{4}[-]?\d{4})$/;
+        const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const NAME_REGEX = /^[A-Za-zÀ-ÿ]+(?:\s[A-Za-zÀ-ÿ]+)*$/;
+        const URL_REGEX = /^https?:\/\/.+/;
+
+        if(typeof this.name !== 'string' || this.name.trim() === '') {
+            throw new ValidationError('Name is required and must be a non-empty string');
+        }
+        if(typeof this.email !== 'string' || this.email.trim() === '') {
+            throw new ValidationError('Email is required and must be a non-empty string');
+        }
+        if (!NAME_REGEX.test(this.name)){
+            throw new ValidationError('Invalid name format');
+        }
+        if(this.name.length > 100 ){
+            throw new ValidationError('Name cannot exceed 100 characters');
         }
         if(!EMAIL_REGEX.test(this.email)){
             throw new ValidationError('Invalid email format');
@@ -47,51 +93,11 @@ export class CreateUsersDto {
         if(this.phone && this.phone.length > 20 ){
             throw new ValidationError('Phone cannot exceed 20 characters');
         }
-        if(this.picture && this.picture.length > 255){
+        if(this.picture && this.picture.length > 255 ){
             throw new ValidationError('Picture URL cannot exceed 255 characters');
         }
-        if(!(this.profile === 'admin' || this.profile === 'operator' || this.profile === 'viewer')){
-            throw new ValidationError('Profile must be admin, operator, or viewer');
-        }
-
-        return this;
-    }
-};
-
-export class RegisterUsersDto {
-        constructor(user){
-        this.name = user.name?.trim();
-        this.matricula = user.matricula?.trim();
-        this.email = user.email?.trim();
-    }
-
-    validate() {
-        const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const NAME_REGEX = /^[A-Za-zÀ-ÿ]+(?:\s[A-Za-zÀ-ÿ]+)*$/;
-
-        if(typeof this.name !== 'string' || this.name.trim() === '') {
-            throw new ValidationError('Name is required and must be a non-empty string');
-        }
-        if(typeof this.matricula !== 'string' || this.matricula.trim() === '') {
-            throw new ValidationError('Matricula is required and must be a non-empty string');
-        }
-        if(typeof this.email !== 'string' || this.email.trim() === '') {
-            throw new ValidationError('Email is required and must be a non-empty string');
-        }
-        if (!NAME_REGEX.test(this.name)){
-            throw new ValidationError('Invalid name format');
-        }
-        if(this.name.length > 100 ){
-            throw new ValidationError('Name cannot exceed 100 characters');
-        }
-        if(this.matricula.length > 30 ){
-            throw new ValidationError('Matricula cannot exceed 30 characters');
-        }
-        if(!EMAIL_REGEX.test(this.email)){
-            throw new ValidationError('Invalid email format');
-        }
-        if(this.email.length > 120 ){
-            throw new ValidationError('Email cannot exceed 120 characters');
+        if(this.picture && !URL_REGEX.test(this.picture)){
+            throw new ValidationError('Invalid picture URL format');
         }
 
         return this;

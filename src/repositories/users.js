@@ -83,7 +83,7 @@ export const UsersRepository = {
                 user.matricula,
                 user.email,
                 user.profile,
-                user.pending=false
+                user.pending,
             ];
             
             const userDB = await client.query(insertUserQuery, values);
@@ -117,5 +117,85 @@ export const UsersRepository = {
             client.release();
         }
 
+    },
+
+    update: async (user) => {
+        const client =  await pool.connect();
+
+        try{
+            await client.query('BEGIN');
+            const fields = [];
+            const values = [];
+            let i = 1;
+
+            for (const [key, value] of Object.entries(user)) {
+                if (key === "id" || key === "roles") continue;
+                if (value === undefined) continue;
+
+                if (key === 'firebaseId') {
+                    fields.push(`firebase_id = $${i}`);
+                    values.push(value);
+                    i++;
+                    continue;
+                }
+
+                if (key === 'createdAt') {
+                    fields.push(`created_at = $${i}`);
+                    values.push(value);
+                    i++;
+                    continue;
+                }
+
+
+                if (key === 'updatedAt') {
+                    fields.push(`updated_at = $${i}`);
+                    values.push(value);
+                    i++;
+                    continue;
+                }
+
+                fields.push(`${key} = $${i}`);
+                values.push(value);
+                i++;
+            }
+
+            values.push(user.id); // último é o id
+
+            const sql = `
+                UPDATE users
+                SET ${fields.join(', ')}
+                WHERE id = $${i}
+                RETURNING *;
+            `;
+
+            const result = await client.query(sql, values);
+
+            const deleteUserRolesQuery = `DELETE FROM users_roles WHERE user_id = $1`;
+            await client.query(deleteUserRolesQuery, [user.id]);
+
+            const insertUserRoleQuery = `INSERT INTO users_roles (user_id, role_id) VALUES ($1, $2)`;
+            for (const roleId of user.roles){
+                await client.query(insertUserRoleQuery, [user.id, roleId])
+            }
+
+            await client.query('COMMIT');
+
+            return new Users(result.rows[0]);
+
+        } catch (error){
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+    },
+
+    delete: async (id) => {
+        const deleteUserQuery = `
+            DELETE FROM users
+            WHERE id = $1;
+        `;
+        
+        await pool.query(deleteUserQuery, [id]);
     }
 };
