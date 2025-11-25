@@ -124,8 +124,8 @@ export const IncidentsRepository = {
             priority = $4,
             ack_at = $5,
             closed_at = $6,
-            updated_at = NOW()
-        WHERE id = $7
+            updated_at = $7
+        WHERE id = $8
         RETURNING *;
         `;
         const values = [
@@ -135,6 +135,7 @@ export const IncidentsRepository = {
             incident.priority,
             incident.ackAt,
             incident.closedAt,
+            incident.updatedAt,
             incident.id
         ];
         const result = await client.query(updateIncidentQuery, values);

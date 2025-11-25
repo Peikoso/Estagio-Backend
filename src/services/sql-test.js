@@ -18,13 +18,5 @@ export const SQLTestService = {
         const savedSQLTest = await SQLTestsRepository.create(newSQLTest);
 
         return savedSQLTest;
-    },
-
-    updateSQLTest: async (id, dto) => {
-        throw new ForbiddenError("Not implemented.");
-    },
-
-    deleteSQLTest: async (id) => {
-        throw new ForbiddenError("Not implemented.");
-    },
+    }
 };

@@ -27,6 +27,8 @@ export class Incidents {
         if(incidentsLogs.currentStatus === 'CLOSED' && !this.closedAt){
             this.closedAt = incidentsLogs.createdAt;
         }
+
+        this.updatedAt = new Date();
     }
 };
 

@@ -25,13 +25,5 @@ export const SQLTestsRepository = {
         const result = await pool.query(insertQuery, values);
 
         return new SQLTest(result.rows[0]);
-    },
-
-    update: async (id, sqlTest) => {
-        // Implementation for updating an existing SQL test in the database
-    },
-
-    delete: async (id) => {
-        // Implementation for deleting an existing SQL test from the database
     }
 };
