@@ -1,8 +1,10 @@
 import { admin } from "../config/firebase.js";
 import { UnauthorizedError } from "../utils/errors.js";
+import { UsersRepository } from '../repositories/users.js';
+import { ForbiddenError } from '../utils/errors.js';
 
 export const AuthService = {
-  async verifyToken(idToken) {
+  verifyToken: async (idToken) => {
     try {
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       return decodedToken;
@@ -11,4 +13,17 @@ export const AuthService = {
       throw new UnauthorizedError("Invalid or expired token.");
     }
   },
+
+  requireAdmin: async (firebaseUid) => {
+    const currentUser = await UsersRepository.findByFirebaseId(firebaseUid);
+
+    if (!currentUser) {
+      throw new UnauthorizedError('User not found.');
+    }
+    if (currentUser.profile !== 'admin') {
+      throw new ForbiddenError('Insufficient permissions');
+    }
+    
+  },
+  
 };

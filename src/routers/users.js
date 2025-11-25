@@ -4,7 +4,8 @@ import express from 'express';
 const router = express.Router();
 
 router.get('/', UsersController.getAllUsers);
-router.get('/:id', UsersController.getUserById)
+router.get('/me', UsersController.getSelf);
+router.get('/:id', UsersController.getUserById);
 router.post('/', UsersController.createUser);
 router.post('/register', UsersController.registerUser);
 router.put('/me', UsersController.userUpdateSelf);

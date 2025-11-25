@@ -3,30 +3,46 @@ import { Users } from '../models/users.js';
 import { ValidationError, NotFoundError } from '../utils/errors.js';
 import { isValidUuid } from '../utils/validations.js';
 import { RoleService } from './roles.js';
-import { register } from 'module';
+import { AuthService } from './auth.js'
 
 export const UserService = {
-    getAllUsers: async () => {
+    getAllUsers: async (currentUserFirebaseUid) => {
+        await AuthService.requireAdmin(currentUserFirebaseUid);
+
         const users = await UsersRepository.findAll();
         
         return users;
     },
 
-    getUserById: async (id) => {
-        if(!isValidUuid(id)){
-            throw new ValidationError('Invalide User UUID.')
-        }
-
-        const user = await UsersRepository.findById(id)
+    getSelf: async (currentUserFirebaseUid) => {
+        const user = await UsersRepository.findByFirebaseId(currentUserFirebaseUid);
 
         if(!user){
-            throw new NotFoundError('User not found.')
+            throw new NotFoundError('User not found.');
         }
 
         return user;
     },
 
-    createUser: async (dto) => {
+    getUserById: async (id, currentUserFirebaseUid) => {
+        if(!isValidUuid(id)){
+            throw new ValidationError('Invalid User UUID.');
+        }
+
+        await AuthService.requireAdmin(currentUserFirebaseUid);
+
+        const user = await UsersRepository.findById(id);
+
+        if(!user){
+            throw new NotFoundError('User not found.');
+        }
+
+        return user;
+    },
+
+    createUser: async (dto, currentUserFirebaseUid) => {
+        await AuthService.requireAdmin(currentUserFirebaseUid)
+
         const newUser = new Users(dto).activate();
 
         for(const roleId of newUser.roles){
@@ -46,8 +62,8 @@ export const UserService = {
         return savedUser;
     },
 
-    adminUpdateUser: async (id, dto) => {
-        const existingUser = await UserService.getUserById(id);
+    adminUpdateUser: async (id, dto, currentUserFirebaseUid) => {
+        const existingUser = await UserService.getUserById(id, currentUserFirebaseUid);
 
         for(const roleId of dto.roles){
             await RoleService.getRoleById(roleId);
@@ -64,8 +80,8 @@ export const UserService = {
         return savedUser;
     },
 
-    userUpdateSelf: async (id, dto) => {
-        const existingUser = await UserService.getUserById(id);
+    userUpdateSelf: async (dto, currentUserFirebaseUid) => {
+        const existingUser = await UserService.getSelf(currentUserFirebaseUid);
 
         const updatedUser = new Users({
             ...existingUser,
@@ -78,8 +94,8 @@ export const UserService = {
         return savedUser;
     },
 
-    deleteUser: async (id) => {
-        await UserService.getUserById(id);
+    deleteUser: async (id, currentUserFirebaseUid) => {
+        await UserService.getUserById(id, currentUserFirebaseUid);
 
         await UsersRepository.delete(id);
     },

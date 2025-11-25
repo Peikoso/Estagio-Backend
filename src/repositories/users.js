@@ -64,6 +64,39 @@ export const UsersRepository = {
         return new Users(result.rows[0]);
     },
 
+    findByFirebaseId: async (id) => {
+        const selectIdQuery = 
+        `
+        SELECT 
+            u.*, 
+            COALESCE(
+                jsonb_agg(
+                    jsonb_build_object(
+                        'id', r.id,
+                        'name', r.name,
+                        'color', r.color
+                    )
+                ) FILTER (WHERE r.id IS NOT NULL),
+                    '[]'::jsonb
+            ) AS roles 
+        FROM users u 
+        LEFT JOIN users_roles ur
+            ON u.id = ur.user_id
+        LEFT JOIN roles r
+            ON ur.role_id = r.id
+        WHERE u.firebase_id = $1
+        GROUP BY u.id;
+        `
+
+        const result = await pool.query(selectIdQuery, [id]);
+
+        if(!result.rows[0]){
+            return null;
+        }
+
+        return new Users(result.rows[0]);
+    },
+
     create: async(user) =>{
         const client =  await pool.connect();
         

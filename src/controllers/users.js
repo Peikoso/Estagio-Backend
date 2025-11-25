@@ -5,17 +5,30 @@ import { ResponseUsersDto } from "../dto/users/response-users-dto.js";
 
 export const UsersController = {
     getAllUsers: async  (req, res) => {
-        const users = await UserService.getAllUsers();
+        const currentUserFirebaseUid = req.user.uid;
+
+        const users = await UserService.getAllUsers(currentUserFirebaseUid);
 
         const response = ResponseUsersDto.fromArray(users);
 
         return res.status(200).json(response);
     },
 
+    getSelf: async (req, res) => {
+        const currentUserFirebaseUid = req.user.uid;
+
+        const user = await UserService.getSelf(currentUserFirebaseUid);
+
+        const response = new ResponseUsersDto(user);
+
+        return res.status(200).json(response);
+    },
+
     getUserById: async (req, res) => {
         const id = req.params.id;
+        const currentUserFirebaseUid = req.user.uid;
         
-        const user = await UserService.getUserById(id);
+        const user = await UserService.getUserById(id, currentUserFirebaseUid);
 
         const response = new ResponseUsersDto(user);
 
@@ -23,11 +36,13 @@ export const UsersController = {
     },
 
     createUser: async (req, res) => {
+        const currentUserFirebaseUid = req.user.uid
+
         const userData = req.body;
 
         const dto = new CreateUsersDto(userData).validate();
 
-        const newUser = await UserService.createUser(dto);
+        const newUser = await UserService.createUser(dto, currentUserFirebaseUid);
 
         const response = new ResponseUsersDto(newUser);
         
@@ -49,10 +64,11 @@ export const UsersController = {
     adminUpdateUser: async (req, res) => {
         const id = req.params.id;
         const userData = req.body;
+        const currentUserFirebaseUid = req.user.uid
 
         const dto = new AdminUpdateUsersDto(userData).validate();
 
-        const updatedUser = await UserService.adminUpdateUser(id, dto);
+        const updatedUser = await UserService.adminUpdateUser(id, dto, currentUserFirebaseUid);
 
         const response = new ResponseUsersDto(updatedUser);
 
@@ -60,12 +76,12 @@ export const UsersController = {
     },
 
     userUpdateSelf: async (req, res) => {
-        const id = req.user.id;
         const userData = req.body;
+        const currentUserFirebaseUid = req.user.uid
 
         const dto = new UpdateUsersDto(userData).validate();
 
-        const updatedUser = await UserService.userUpdateSelf(id, dto);
+        const updatedUser = await UserService.userUpdateSelf(dto, currentUserFirebaseUid);
 
         const response = new ResponseUsersDto(updatedUser);
 
@@ -74,8 +90,9 @@ export const UsersController = {
 
     deleteUser: async (req, res) => {
         const id = req.params.id;
+        const currentUserFirebaseUid = req.user.uid
 
-        await UserService.deleteUser(id);
+        await UserService.deleteUser(id, currentUserFirebaseUid);
 
         return res.status(204).send();
     }
