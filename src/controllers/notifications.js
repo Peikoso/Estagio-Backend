@@ -1,4 +1,5 @@
 import { CreateNotificationsDto} from '../dto/notifications/create-notifications-dto.js';
+import { UpdateNotificationsDto } from '../dto/notifications/update-notifications-dto.js';
 import { ResponseNotificationsDto } from '../dto/notifications/response-notifications-dto.js';
 import { NotificationService } from '../services/notifications.js';
 
@@ -27,10 +28,9 @@ export const NotificationsController = {
 
     updateNotification: async (req, res) => {
         const id = req.params.id;
-
         const notificationData = req.body;
 
-        const dto = new CreateNotificationsDto(notificationData).validate();
+        const dto = new UpdateNotificationsDto(notificationData).validate();
 
         const updatedNotification = await NotificationService.updateNotification(id, dto);
 

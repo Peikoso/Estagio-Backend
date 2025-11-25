@@ -10,7 +10,6 @@ export class CreateNotificationsDto {
         this.message = notification.message?.trim();
         this.sentAt = notification.sentAt;
         this.status = notification.status?.trim();
-        this.createdAt = notification.createdAt;
     }
 
     validate() {
