@@ -34,6 +34,28 @@ export const RunnerService = {
         const savedRunner = await RunnersRepository.create(newRunner);
 
         return savedRunner;
+    },
+
+    updateRunner: async (id, dto) => {
+        const existingRunner = await RunnerService.getRunnerById(id);
+
+        const updatedRunner = new Runners({
+            ...existingRunner,
+            ...dto,
+            updatedAt: new Date()
+        }).validateBusinessLogic();
+
+        await RuleService.getRuleById(updatedRunner.ruleId);
+
+        const savedRunner = await RunnersRepository.update(updatedRunner);
+
+        return savedRunner;
+    },
+
+    deleteRunner: async (id) => {
+        await RunnerService.getRunnerById(id);
+
+        await RunnersRepository.delete(id);
     }
 };
 

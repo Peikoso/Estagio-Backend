@@ -19,9 +19,6 @@ export class Runners {
         if(this.lastRunAt > this.nextRunAt) {
             throw new BusinessLogicError('Last run time must be before next run time');
         }
-        if(this.status !== 'active' && this.status !== 'inactive') {
-            throw new BusinessLogicError('Status must be either active or inactive');
-        }
 
         return this;
     }

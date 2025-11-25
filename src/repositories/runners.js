@@ -48,6 +48,41 @@ export const RunnersRepository = {
         const result =  await pool.query(insertRunnerQuery, values);
         
         return new Runners(result.rows[0]);
+    },
+
+    update: async (runner) => {
+        const updateQuery = 
+        `
+        UPDATE runners
+        SET rule_id = $1,
+            status = $2,
+            last_run_at = $3,
+            next_run_at = $4
+        WHERE id = $5
+        RETURNING *;
+        `;
+
+        const values = [
+            runner.ruleId,
+            runner.status,
+            runner.lastRunAt,
+            runner.nextRunAt,
+            runner.id
+        ];
+
+        const result = await pool.query(updateQuery, values);
+
+        return new Runners(result.rows[0]);
+    },
+
+    delete: async (id) => {
+        const deleteQuery = 
+        `
+        DELETE FROM runners
+        WHERE id = $1;
+        `;
+
+        await pool.query(deleteQuery, [id]);
     }
 };
 

@@ -22,6 +22,9 @@ export class CreateRunnersDto {
         if(!validateTimestampFormat(this.nextRunAt)) {
             throw new ValidationError('Next run at must be in the format YYYY-MM-DDTHH:MM:SS.sssZ');
         }
+        if(this.status !== 'active' && this.status !== 'inactive') {
+            throw new BusinessLogicError('Status must be either active or inactive');
+        }
         
         return this;
     }

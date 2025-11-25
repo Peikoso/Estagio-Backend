@@ -21,6 +21,27 @@ export const RunnersController = {
         const response = new ResponseRunnersDto(newRunner);
 
         return res.status(201).json(response);
+    },
+
+    updateRunner: async (req, res) => {
+        const id = req.params.id;
+        const runnerData = req.body;
+
+        const dto = new CreateRunnersDto(runnerData).validate();
+
+        const updatedRunner = await RunnerService.updateRunner(id, dto);
+
+        const response = new ResponseRunnersDto(updatedRunner);
+
+        return res.status(200).json(response);
+    },
+
+    deleteRunner: async (req, res) => {
+        const runnerId = req.params.id;
+
+        await RunnerService.deleteRunner(runnerId);
+
+        return res.status(204).send();
     }
 };
 

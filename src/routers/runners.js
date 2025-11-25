@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.get('/', RunnersController.getAllRunners);
 router.post('/', RunnersController.createRunner);
+router.put('/:id', RunnersController.updateRunner);
+router.delete('/:id', RunnersController.deleteRunner);
 
 router.get('/queue', RunnerQueueController.getAllRunnerQueue);
 router.post('/queue', RunnerQueueController.createRunnerQueue);
