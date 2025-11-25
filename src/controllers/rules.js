@@ -35,4 +35,25 @@ export const RulesController = {
 
         return res.status(201).json(response);
     },
+
+    updateRule: async (req, res) => {
+        const id = req.params.id;
+        const ruleData = req.body;
+        
+        const dto = new CreateRulesDto(ruleData).validate();
+
+        const updatedRule = await RuleService.updateRule(id, dto);
+
+        const response = new ResponseRulesDto(updatedRule);
+
+        return res.status(200).json(response);
+    },
+
+    deleteRule: async (req, res) => {
+        const id = req.params.id;
+
+        await RuleService.deleteRule(id);
+
+        return res.status(204).send();
+    }
 };

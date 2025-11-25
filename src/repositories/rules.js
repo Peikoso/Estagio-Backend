@@ -99,11 +99,88 @@ export const RulesRepository = {
         }
     },
 
-    update: async (id, rule) => {
-        // Lógica para atualizar uma regra existente no banco de dados
+    update: async (rule) => {
+        const client = await pool.connect();
+
+        try {
+            await client.query('BEGIN');
+
+            const updateRuleQuery = 
+            `
+            UPDATE rules
+            SET name = $1,
+                description = $2,
+                sql = $3,
+                priority = $4,
+                execution_interval_ms = $5,
+                max_error_count = $6,
+                timeout_ms = $7,
+                start_time = $8,
+                end_time = $9,
+                notification_enabled = $10,
+                is_active = $11,
+                silence_mode = $12,
+                postpone_date = $13,
+                updated_at = $14
+            WHERE id = $15;
+            `;
+
+            const values = [
+                rule.name,
+                rule.description,
+                rule.sql,
+                rule.priority,
+                rule.executionIntervalMs,
+                rule.maxErrorCount,
+                rule.timeoutMs,
+                rule.startTime,
+                rule.endTime,
+                rule.notificationEnabled,
+                rule.isActive,
+                rule.silenceMode,
+                rule.postponeDate,
+                rule.updatedAt,
+                rule.id
+            ];
+
+            await client.query(updateRuleQuery, values);
+
+            const deleteRolesQuery = ` DELETE FROM rules_roles WHERE rule_id = $1; `;
+            await client.query(deleteRolesQuery, [id]);
+
+            const insertRoleRuleQuery = ` INSERT INTO rules_roles (rule_id, role_id) VALUES ($1, $2); `;
+
+            for (const roleId of rule.roles) {
+                await client.query(insertRoleRuleQuery, [id, roleId]);
+            }
+
+            const ruleWithRolesQuery = 
+            `
+            SELECT r.*, array_remove(array_agg(rr.role_id), NULL) AS roles
+            FROM rules r
+            LEFT JOIN rules_roles rr 
+            ON r.id = rr.rule_id
+            WHERE r.id = $1
+            GROUP BY r.id;
+            `;
+
+            const result = await client.query(ruleWithRolesQuery, [id]);
+
+            await client.query('COMMIT');
+            
+            return new Rules(result.rows[0]);
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+
     },
 
     delete: async (id) => {
-        // Lógica para deletar uma regra do banco de dados
+        const deleteQuery = ` DELETE FROM rules WHERE id = $1; `;
+
+        await pool.query(deleteQuery, [id]);
     }
 };

@@ -42,10 +42,26 @@ export const RuleService = {
     },
 
     updateRule: async (id, dto) => {
-        throw new ForbiddenError("Not implemented.");
+        const existingRule = await RuleService.getRuleById(id);
+
+        const updatedRule = new Rules({
+            ...existingRule,
+            ...dto,
+            updatedAt: new Date()
+        }).validateBusinessLogic();
+
+        for(const roleId of updatedRule.roles){
+            await RoleService.getRoleById(roleId);
+        }
+
+        const savedRule = await RulesRepository.update(updatedRule);
+
+        return savedRule;
     },
 
     deleteRule: async (id) => {
-        throw new ForbiddenError("Not implemented.");
+        await RuleService.getRuleById(id);
+        
+        await RulesRepository.delete(id);
     }
 };
