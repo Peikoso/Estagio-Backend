@@ -89,6 +89,27 @@ export const RunnerQueueService = {
 
         return savedRunnerQueue;
     },
+
+    updateRunnerQueue: async (id, dto) => {
+        const existingRunnerQueue = await RunnerQueueService.getRunnerQueueById(id);
+
+        const updatedRunnerQueue = new RunnerQueue({
+            ...existingRunnerQueue,
+            ...dto,
+        }).validateBusinessLogic();
+
+        await RunnerService.getRunnerById(updatedRunnerQueue.runnerId);
+
+        const savedRunnerQueue = await RunnerQueueRepository.update(updatedRunnerQueue);
+
+        return savedRunnerQueue;
+    },
+
+    deleteRunnerQueue: async (id) => {
+        await RunnerQueueService.getRunnerQueueById(id);
+
+        await RunnerQueueRepository.delete(id);
+    }
 };
 
 export const RunnerLogService = {

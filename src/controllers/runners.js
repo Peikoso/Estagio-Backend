@@ -1,6 +1,7 @@
 import { RunnerService, RunnerLogService, RunnerQueueService } from '../services/runners.js';
 import { ResponseRunnersDto, ResponseRunnerLogsDto, ResponseRunnerQueueDto } from '../dto/runners/response-runners-dto.js';
 import { CreateRunnersDto, CreateRunnerLogsDto, CreateRunnerQueueDto } from '../dto/runners/create-runners-dto.js';
+import { UpdateRunnerQueueDto } from '../dto/runners/update-runners-dto.js';
 
 export const RunnersController = {
     getAllRunners: async (req, res) => {
@@ -64,6 +65,27 @@ export const RunnerQueueController = {
         const response = new ResponseRunnerQueueDto(newRunnerQueue);
 
         return res.status(201).json(response);
+    },
+
+    updateRunnerQueue: async (req, res) => {
+        const id = req.params.id;
+        const runnerQueueData = req.body;
+
+        const dto = new UpdateRunnerQueueDto(runnerQueueData).validate();
+
+        const updatedRunnerQueue = await RunnerQueueService.updateRunnerQueue(id, dto);
+
+        const response = new ResponseRunnerQueueDto(updatedRunnerQueue);
+
+        return res.status(200).json(response);
+    },
+
+    deleteRunnerQueue: async (req, res) => {
+        const runnerQueueId = req.params.id;
+
+        await RunnerQueueService.deleteRunnerQueue(runnerQueueId);
+
+        return res.status(204).send();
     }
 };
 
@@ -77,7 +99,7 @@ export const RunnerLogsController = {
     },
 
     getRunnerLogsByRunnerId: async (req, res) => {
-        const runnerId = req.params.id;
+        const runnerId = req.params.runnerId;
 
         const runnerLogs = await RunnerLogService.getRunnerLogsByRunnerId(runnerId);
 

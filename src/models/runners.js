@@ -29,6 +29,7 @@ export class RunnerQueue{
     constructor(runnerQueue){
         this.id = runnerQueue.id;
         this.runnerId = runnerQueue.runner_id ?? runnerQueue.runnerId;
+        this.status = runnerQueue.status;
         this.scheduledFor = runnerQueue.scheduled_for ?? runnerQueue.scheduledFor;
         this.queuedAt = runnerQueue.queued_at ?? runnerQueue.queuedAt;
         this.startedAt = runnerQueue.started_at ?? runnerQueue.startedAt;

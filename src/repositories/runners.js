@@ -131,6 +131,47 @@ export const RunnerQueueRepository = {
         const result = await pool.query(insertQuery, values);
 
         return new RunnerQueue(result.rows[0]);
+    },
+
+    update: async (runnerQueue) => {
+        const updateQuery = 
+        `
+        UPDATE runner_queue
+        SET runner_id = $1,
+            status = $2,
+            scheduled_for = $3,
+            queued_at = $4,
+            started_at = $5,
+            finished_at = $6,
+            attempt_count = $7
+        WHERE id = $8
+        RETURNING *;
+        `;
+
+        const values = [
+            runnerQueue.runnerId,
+            runnerQueue.status,
+            runnerQueue.scheduledFor,
+            runnerQueue.queuedAt,
+            runnerQueue.startedAt,
+            runnerQueue.finishedAt,
+            runnerQueue.attemptCount,
+            runnerQueue.id
+        ];
+
+        const result = await pool.query(updateQuery, values);
+
+        return new RunnerQueue(result.rows[0]);
+    },
+
+    delete: async (id) => {
+        const deleteQuery = 
+        `
+        DELETE FROM runner_queue
+        WHERE id = $1;
+        `;
+
+        await pool.query(deleteQuery, [id]);
     }
 };
 
