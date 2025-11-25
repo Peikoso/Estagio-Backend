@@ -30,7 +30,7 @@ export class CreateRulesDto {
         if(typeof this.sql !== 'string' || this.sql === '') {
             throw new ValidationError('SQL is required and must be a non-empty string');
         }
-        if(!(this.priority === 'LOW' || this.priority === 'MEDIUM' || this.priority === 'HIGH')) {
+        if(this.priority !== 'LOW' && this.priority !== 'MEDIUM' && this.priority !== 'HIGH') {
             throw new ValidationError('Priority must be LOW, MEDIUM, or HIGH');
         }
         if(!Array.isArray(this.roles) || this.roles.length === 0 || !this.roles.every(role => typeof role === 'string')) {

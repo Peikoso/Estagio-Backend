@@ -14,7 +14,7 @@ export class CreateIncidentsDto {
         if (!this.ruleId) {
             throw new ValidationError('ruleId is required');
         }
-        if (!(this.priority === 'LOW' || this.priority === 'MEDIUM' || this.priority === 'HIGH')) {
+        if (this.priority !== 'LOW' && this.priority !== 'MEDIUM' && this.priority !== 'HIGH') {
             throw new ValidationError('Priority must be LOW, MEDIUM, or HIGH');
         }
 

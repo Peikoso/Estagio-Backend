@@ -50,7 +50,7 @@ export class CreateUsersDto {
         if(this.picture && this.picture.length > 255){
             throw new ValidationError('Picture URL cannot exceed 255 characters');
         }
-        if(!(this.profile === 'admin' || this.profile === 'operator' || this.profile === 'viewer')){
+        if(this.profile !== 'admin' && this.profile !== 'operator' && this.profile !== 'viewer'){
             throw new ValidationError('Profile must be admin, operator, or viewer');
         }
 

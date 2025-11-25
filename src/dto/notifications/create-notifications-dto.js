@@ -32,7 +32,7 @@ export class CreateNotificationsDto {
         if(!validateTimestampFormat(this.sentAt)) {
             throw new ValidationError('SentAt must be in a valid timestamp format');
         }
-        if(this.status !== 'SENT' || this.status !== 'READED' || this.status !== 'FAILED') {
+        if(this.status !== 'SENT' && this.status !== 'READED' && this.status !== 'FAILED') {
             throw new ValidationError('Status must be one of the following values: SENT, READED, FAILED');
         }
 

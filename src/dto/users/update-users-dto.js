@@ -47,7 +47,7 @@ export class AdminUpdateUsersDto {
         if(this.email.length > 120 ){
             throw new ValidationError('Email cannot exceed 120 characters');
         }
-        if(!(this.profile === 'admin' || this.profile === 'operator' || this.profile === 'viewer')){
+        if(this.profile !== 'admin' && this.profile !== 'operator' && this.profile !== 'viewer'){
             throw new ValidationError('Profile must be admin, operator, or viewer');
         }
 

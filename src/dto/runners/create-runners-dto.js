@@ -72,7 +72,7 @@ export class CreateRunnerLogsDto {
         if (isNaN(this.runTimeMs) || !Number.isInteger(this.runTimeMs)) {
             throw new ValidationError('Run time must be a integer number');
         }
-        if (this.executionStatus !== 'SUCCESS' || this.executionStatus !== 'TIMEOUT' || this.executionStatus !== 'ERROR') {
+        if (this.executionStatus !== 'SUCCESS' && this.executionStatus !== 'TIMEOUT' && this.executionStatus !== 'ERROR') {
             throw new ValidationError('Execution status must be either SUCCESS. TIMEOUT or ERROR');
         }
         if (isNaN(this.rowsAffected) || !Number.isInteger(this.rowsAffected)) {
