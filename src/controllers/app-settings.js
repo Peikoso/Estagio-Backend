@@ -22,4 +22,24 @@ export const AppSettingsController = {
 
         return res.status(201).json(response);
     },
+
+    updateAppSettings: async (req, res) => {
+        const appSettingsData = req.body;
+
+        const dto = new CreateAppSettingsDto(appSettingsData);
+
+        const updatedAppSettings = await AppSettingService.updateAppSettings(dto);  
+
+        const response = new ResponseAppSettingsDto(updatedAppSettings);
+
+        return res.status(200).json(response);
+    },
+
+    deleteAppSettings: async (req, res) => {
+        const key = req.params.key;
+
+        await AppSettingService.deleteAppSettings(key);
+
+        return res.status(204).send();
+    }
 };

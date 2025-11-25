@@ -146,12 +146,12 @@ export const RulesRepository = {
             await client.query(updateRuleQuery, values);
 
             const deleteRolesQuery = ` DELETE FROM rules_roles WHERE rule_id = $1; `;
-            await client.query(deleteRolesQuery, [id]);
+            await client.query(deleteRolesQuery, [rule.id]);
 
             const insertRoleRuleQuery = ` INSERT INTO rules_roles (rule_id, role_id) VALUES ($1, $2); `;
 
             for (const roleId of rule.roles) {
-                await client.query(insertRoleRuleQuery, [id, roleId]);
+                await client.query(insertRoleRuleQuery, [rule.id, roleId]);
             }
 
             const ruleWithRolesQuery = 
@@ -164,7 +164,7 @@ export const RulesRepository = {
             GROUP BY r.id;
             `;
 
-            const result = await client.query(ruleWithRolesQuery, [id]);
+            const result = await client.query(ruleWithRolesQuery, [rule.id]);
 
             await client.query('COMMIT');
             
