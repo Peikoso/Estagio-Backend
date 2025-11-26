@@ -2,19 +2,24 @@ import { RolesRepository } from '../repositories/roles.js';
 import { Roles } from '../models/roles.js';
 import { isValidUuid } from '../utils/validations.js';
 import { NotFoundError, ValidationError } from '../utils/errors.js';
+import { AuthService } from './auth.js';
 
 
 export const RoleService = {
-    getAllRoles: async () => {
+    getAllRoles: async (currentUserFirebaseUid) => {
+        await AuthService.requireAdmin(currentUserFirebaseUid);
+
         const roles = await RolesRepository.findAll();
         
         return roles;
     },
 
-    getRoleById: async (id) => {
+    getRoleById: async (id, currentUserFirebaseUid) => {
         if(!isValidUuid(id)){
             throw new ValidationError('Invalid Role UUID.');
         }
+
+        await AuthService.requireAdmin(currentUserFirebaseUid);
 
         const role = await RolesRepository.findById(id);
 
@@ -25,7 +30,9 @@ export const RoleService = {
         return role;
     },
 
-    createRole: async (dto) => {
+    createRole: async (dto, currentUserFirebaseUid) => {
+        await AuthService.requireAdmin(currentUserFirebaseUid);
+
         const newRole = new Roles(dto);
 
         const savedRole = await RolesRepository.create(newRole);
@@ -33,8 +40,8 @@ export const RoleService = {
         return savedRole;
     },
 
-    updateRole: async (id, dto) => {
-        const existingRole = await RoleService.getRoleById(id);
+    updateRole: async (id, dto, currentUserFirebaseUid) => {
+        const existingRole = await RoleService.getRoleById(id, currentUserFirebaseUid);
 
         const updatedRole = new Roles({
             ...existingRole,
@@ -47,8 +54,8 @@ export const RoleService = {
         return savedRole;
     },
 
-    deleteRole: async (id) => {
-        await RoleService.getRoleById(id);
+    deleteRole: async (id, currentUserFirebaseUid) => {
+        await RoleService.getRoleById(id, currentUserFirebaseUid);
         
         await RolesRepository.delete(id);
     }

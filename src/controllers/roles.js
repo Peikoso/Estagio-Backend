@@ -5,7 +5,9 @@ import { ResponseRolesDto } from '../dto/roles/response-roles-dto.js';
 
 export const RolesController = {
     getAllRoles: async (req, res) => {
-        const roles = await RoleService.getAllRoles();
+        const currentUserFirebaseUid = req.user.uid;
+
+        const roles = await RoleService.getAllRoles(currentUserFirebaseUid);
 
         const response = ResponseRolesDto.fromArray(roles);
 
@@ -13,11 +15,12 @@ export const RolesController = {
     },
 
     createRole: async (req, res) => {
+        const currentUserFirebaseUid = req.user.uid;
         const roleData = req.body;
 
         const dto = new CreateRolesDto(roleData).validate();
 
-        const newRole = await RoleService.createRole(dto);
+        const newRole = await RoleService.createRole(dto, currentUserFirebaseUid);
 
         const response = new ResponseRolesDto(newRole);
 
@@ -25,12 +28,13 @@ export const RolesController = {
     },
 
     updateRole: async (req, res) => {
+        const currentUserFirebaseUid = req.user.uid;
         const id = req.params.id;
         const roleData = req.body;
 
         const dto = new CreateRolesDto(roleData).validate();
 
-        const updatedRole = await RoleService.updateRole(id, dto);
+        const updatedRole = await RoleService.updateRole(id, dto, currentUserFirebaseUid);
 
         const response = new ResponseRolesDto(updatedRole);
 
@@ -38,9 +42,10 @@ export const RolesController = {
     },
 
     deleteRole: async (req, res) => {
+        const currentUserFirebaseUid = req.user.uid;
         const id = req.params.id;
 
-        await RoleService.deleteRole(id);
+        await RoleService.deleteRole(id, currentUserFirebaseUid);
 
         return res.status(204).send();
     }
