@@ -8,10 +8,23 @@ import { admin } from '../config/firebase.js'
 import { config } from '../config/index.js';
 
 export const UserService = {
-    getAllUsers: async (currentUserFirebaseUid) => {
+    getAllUsers: async (
+        currentUserFirebaseUid, name, matricula, role, pending, profile, page, per_page
+    ) => {
         await AuthService.requireAdmin(currentUserFirebaseUid);
+        const pageNumber = parseInt(page) > 0 ? parseInt(page) : 1;
+        const limit = parseInt(per_page) > 0 ? parseInt(per_page) : 10;
+        const offset = (pageNumber - 1) * limit;
 
-        const users = await UsersRepository.findAll();
+        const users = await UsersRepository.findAll(
+            name, 
+            matricula, 
+            role, 
+            pending, 
+            profile, 
+            limit, 
+            offset
+        );
 
         return users;
     },
@@ -56,7 +69,7 @@ export const UserService = {
         newUser.firebaseId = fireBaseUser.uid;
 
         for(const roleId of newUser.roles){
-            await RoleService.getRoleById(roleId);
+            await RoleService.getRoleById(roleId, currentUserFirebaseUid);
         }
 
         try{
@@ -101,7 +114,7 @@ export const UserService = {
         const existingUser = await UserService.getUserById(id, currentUserFirebaseUid);
 
         for(const roleId of dto.roles){
-            await RoleService.getRoleById(roleId);
+            await RoleService.getRoleById(roleId, currentUserFirebaseUid);
         }
 
         const updatedUser = new Users({
@@ -128,6 +141,8 @@ export const UserService = {
             ...dto,
             updatedAt: new Date(),
         });
+
+        updatedUser.rolesToIds();
 
         const savedUser = await UsersRepository.update(updatedUser);
 

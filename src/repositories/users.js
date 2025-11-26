@@ -2,31 +2,48 @@ import { pool } from '../config/database-conn.js';
 import { Users } from '../models/users.js'
 
 export const UsersRepository = {
-    findAll: async () => {
-        const result = await pool.query(
-            `
-            SELECT 
-                u.*, 
-                COALESCE(
-                    jsonb_agg(
-                        jsonb_build_object(
-                            'id', r.id,
-                            'name', r.name,
-                            'color', r.color
-                        )
-                    ) FILTER (WHERE r.id IS NOT NULL),
-                     '[]'::jsonb
-                ) AS roles 
-            FROM users u 
-            LEFT JOIN users_roles ur
-                ON u.id = ur.user_id
-            LEFT JOIN roles r
-                ON ur.role_id = r.id
-            GROUP BY u.id
-            ORDER BY created_at DESC;
-            `
-        );
-        
+    findAll: async (name, matricula, role, pending, profile, limit, offset) => {
+        const selectQuery =
+        `
+        SELECT 
+            u.*, 
+            COALESCE(
+                jsonb_agg(
+                    jsonb_build_object(
+                        'id', r.id,
+                        'name', r.name,
+                        'color', r.color
+                    )
+                ) FILTER (WHERE r.id IS NOT NULL),
+                    '[]'::jsonb
+            ) AS roles 
+        FROM users u 
+        LEFT JOIN users_roles ur
+            ON u.id = ur.user_id
+        LEFT JOIN roles r
+            ON ur.role_id = r.id
+        WHERE
+            ($1::varchar IS NULL OR u.name ILIKE '%' || $1 || '%')
+            AND ($2::varchar IS NULL OR u.matricula ILIKE '%' || $2 || '%')
+            AND ($3::uuid IS NULL OR r.id = $3)
+            AND ($4::boolean IS NULL OR u.pending = $4)
+            AND ($5::varchar IS NULL OR u.profile = $5)
+        GROUP BY u.id
+        ORDER BY created_at DESC
+        LIMIT $6 OFFSET $7;
+        `;
+
+        const values = [
+            name || null, 
+            matricula || null,
+            role || null,
+            pending || null,
+            profile || null,
+            limit,
+            offset
+        ];
+
+        const result = await pool.query(selectQuery, values);
 
         return Users.fromArray(result.rows);
     },

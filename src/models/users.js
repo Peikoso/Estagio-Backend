@@ -26,6 +26,12 @@ export class Users {
 
         return this;
     }
+    
+    rolesToIds(){
+        this.roles = this.roles.map(role => role.id);
+
+        return this;
+    }
 
     static fromArray(usersArray) {
         return usersArray.map((user) => new Users(user));

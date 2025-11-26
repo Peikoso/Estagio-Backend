@@ -2,7 +2,6 @@ import { ValidationError } from '../../utils/errors.js';
 
 export class AdminUpdateUsersDto {
     constructor(user){
-        this.firebaseId = user.firebaseId?.trim();
         this.name = user.name?.trim();
         this.matricula = user.matricula?.trim();
         this.email = user.email?.trim();
@@ -14,9 +13,6 @@ export class AdminUpdateUsersDto {
         const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const NAME_REGEX = /^[A-Za-zÀ-ÿ]+(?:\s[A-Za-zÀ-ÿ]+)*$/;
         
-        if(!this.firebaseId || typeof this.firebaseId !== 'string') {
-            throw new ValidationError('Firebase ID is required and must be a string');
-        }
         if(typeof this.name !== 'string' || this.name.trim() === '') {
             throw new ValidationError('Name is required and must be a non-empty string');
         }
@@ -31,9 +27,6 @@ export class AdminUpdateUsersDto {
         }
         if (!NAME_REGEX.test(this.name)){
             throw new ValidationError('Invalid name format');
-        }
-        if(this.firebaseId.length > 128 ){
-            throw new ValidationError('Firebase ID cannot exceed 128 characters');
         }
         if(this.name.length > 100 ){
             throw new ValidationError('Name cannot exceed 100 characters');
