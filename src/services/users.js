@@ -4,13 +4,15 @@ import { ValidationError, NotFoundError } from '../utils/errors.js';
 import { isValidUuid } from '../utils/validations.js';
 import { RoleService } from './roles.js';
 import { AuthService } from './auth.js'
+import { admin } from '../config/firebase.js'
+import { config } from '../config/index.js';
 
 export const UserService = {
     getAllUsers: async (currentUserFirebaseUid) => {
         await AuthService.requireAdmin(currentUserFirebaseUid);
 
         const users = await UsersRepository.findAll();
-        
+
         return users;
     },
 
@@ -45,13 +47,28 @@ export const UserService = {
 
         const newUser = new Users(dto).activate();
 
+        const fireBaseUser = await admin.auth().createUser({
+            email: newUser.email,
+            displayName: newUser.name,
+            password: config.DEFAULT_PASSWORD
+        });
+
+        newUser.firebaseId = fireBaseUser.uid;
+
         for(const roleId of newUser.roles){
             await RoleService.getRoleById(roleId);
         }
 
-        const savedUser = await UsersRepository.create(newUser);
+        try{
+            const savedUser = await UsersRepository.create(newUser);
 
-        return savedUser;
+            return savedUser;
+        } catch(error){
+            console.error(error);
+
+            await admin.auth().deleteUser(fireBaseUser.uid);
+        }
+        
     },
 
     registerUser: async (dto) => {
@@ -77,6 +94,11 @@ export const UserService = {
 
         const savedUser = await UsersRepository.update(updatedUser);
 
+        await admin.auth().updateUser(updatedUser.firebaseId,{
+            email: savedUser.email,
+            displayName: savedUser.name
+        })
+
         return savedUser;
     },
 
@@ -91,13 +113,22 @@ export const UserService = {
 
         const savedUser = await UsersRepository.update(updatedUser);
 
+        await admin.auth().updateUser(updatedUser.firebaseId,{
+            email: savedUser.email,
+            displayName: savedUser.name
+        })
+
         return savedUser;
     },
 
     deleteUser: async (id, currentUserFirebaseUid) => {
-        await UserService.getUserById(id, currentUserFirebaseUid);
+        const existingUser = await UserService.getUserById(id, currentUserFirebaseUid);
 
         await UsersRepository.delete(id);
+
+        if(existingUser.firebaseId){
+            await admin.auth().deleteUser(existingUser.firebaseId)
+        }
     },
 
 };

@@ -106,12 +106,13 @@ export const UsersRepository = {
             const insertUserQuery = 
             `
             INSERT INTO users
-            (name, matricula, email, profile, pending)
-            VALUES ($1, $2, $3, $4, $5)
+            (firebase_id, name, matricula, email, profile, pending)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id;
             `;
 
             const values = [
+                user.firebaseId,
                 user.name,
                 user.matricula,
                 user.email,

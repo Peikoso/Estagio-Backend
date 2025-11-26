@@ -1,13 +1,10 @@
 import admin from "firebase-admin";
-
 import fs from "fs";
 import path from "path";
-import dotenv from "dotenv";
-import process from "process";
+import { config } from './index.js';
 
-dotenv.config();
 
-const SERVICE_PATH = process.env.SERVICE_PATH;
+const SERVICE_PATH = config.SERVICE_PATH;
 
 const serviceAccountPath = path.resolve(
   SERVICE_PATH

@@ -1,0 +1,12 @@
+import dotenv from "dotenv";
+import process from 'process';
+
+dotenv.config();
+
+export const config = {
+    PORT: process.env.PORT,
+    DATABASE_URL: process.env.DATABASE_URL,
+    DEFAULT_PASSWORD: process.env.DEFAULT_PASSWORD,
+    SERVICE_PATH: process.env.SERVICE_PATH
+};
+

@@ -1,12 +1,9 @@
-import dotenv from 'dotenv';
 import pkg from 'pg';
-import process from 'process';
-
-dotenv.config();
+import { config } from './index.js';
 
 const { Pool, types } = pkg;
 
-const DATABASE_URL = process.env.DATABASE_URL;
+const DATABASE_URL = config.DATABASE_URL;
 
 // bigint (int8)
 types.setTypeParser(20, (val) => parseInt(val, 10));

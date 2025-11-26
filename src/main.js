@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import process from 'process';
@@ -6,15 +5,16 @@ import routes from './routers/index.js';
 import { AuthMiddleware } from './middleware/auth-middleware.js';
 import { ErrorMiddleware } from './middleware/error-middleware.js';
 import { ValidateBodyMiddleware } from './middleware/validate-body-middleware.js';
+import { config } from './config/index.js';
 
-dotenv.config();
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(AuthMiddleware);  // Desativado temporariamente para permitir acesso sem autenticação
 app.use(ValidateBodyMiddleware)
 
-const PORT = process.env.PORT || 8000;
+const PORT = config.PORT || 8000;
 
 app.get('/', async(req, res) => {
     res.json('Bem Vindo ao QQMonitor');
