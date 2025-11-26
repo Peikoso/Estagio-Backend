@@ -61,6 +61,17 @@ export const UsersController = {
         return res.status(201).json(response);
     },
 
+    approveUser: async (req, res) => {
+        const userId = req.params.userId;
+        const currentUserFirebaseUid = req.user.uid;
+
+        const aprovedUser = await UserService.approveUser(userId, currentUserFirebaseUid);
+
+        const response = new ResponseUsersDto(aprovedUser);
+
+        return res.status(200).json(response);
+    },
+
     adminUpdateUser: async (req, res) => {
         const id = req.params.id;
         const userData = req.body;

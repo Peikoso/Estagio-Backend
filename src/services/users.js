@@ -79,6 +79,24 @@ export const UserService = {
         return savedUser;
     },
 
+    approveUser: async (userId, currentUserFirebaseUid) => {
+        const existingUser = await UserService.getUserById(userId, currentUserFirebaseUid);
+         
+        const fireBaseUser = await admin.auth().createUser({
+            email: existingUser.email,
+            displayName: existingUser.name,
+            password: config.DEFAULT_PASSWORD
+        });
+
+        existingUser.firebaseId = fireBaseUser.uid;
+
+        existingUser.activate();
+        
+        const savedUser = await UsersRepository.update(existingUser);
+
+        return savedUser;
+    },
+
     adminUpdateUser: async (id, dto, currentUserFirebaseUid) => {
         const existingUser = await UserService.getUserById(id, currentUserFirebaseUid);
 
