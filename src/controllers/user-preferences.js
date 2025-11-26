@@ -4,9 +4,9 @@ import { UserPreferenceService } from "../services/user-preferences.js";
 
 export const UserPreferencesController = {
     getUserPreferences: async (req, res) => {
-        const userId = req.params.userId;
+        const currentUserFirebaseUid = req.user.uid;
 
-        const userPreferences = await UserPreferenceService.getUserPreferences(userId);
+        const userPreferences = await UserPreferenceService.getUserPreferencesByFirebaseUid(currentUserFirebaseUid);
 
         const response = new ResponseUserPreferencesDto(userPreferences);
 
@@ -14,11 +14,12 @@ export const UserPreferencesController = {
     },
 
     createUserPreferences: async (req, res) => {
+        const currentUserFirebaseUid = req.user.uid;
         const preferencesData = req.body;
 
         const dto = new CreateUserPreferencesDto(preferencesData).validate();
         
-        const newUserPreferences = await UserPreferenceService.createUserPreference(dto);
+        const newUserPreferences = await UserPreferenceService.createUserPreference(dto, currentUserFirebaseUid);
 
         const response = new ResponseUserPreferencesDto(newUserPreferences);
 
@@ -26,11 +27,12 @@ export const UserPreferencesController = {
     },
 
     updateUserPreferences: async (req, res) => {
+        const currentUserFirebaseUid = req.user.uid;
         const preferencesData = req.body;
 
         const dto = new CreateUserPreferencesDto(preferencesData).validate();
 
-        const updatedUserPreferences = await UserPreferenceService.updateUserPreferences(dto);
+        const updatedUserPreferences = await UserPreferenceService.updateUserPreferences(dto, currentUserFirebaseUid);
 
         const response = new ResponseUserPreferencesDto(updatedUserPreferences);
 
@@ -39,9 +41,9 @@ export const UserPreferencesController = {
     },
 
     deleteUserPreferences: async (req, res) => {
-        const userId = req.params.userId;
+        const currentUserFirebaseUid = req.user.uid;
 
-        await UserPreferenceService.deleteUserPreferences(userId);
+        await UserPreferenceService.deleteUserPreferences(currentUserFirebaseUid);
 
         return res.status(204).send();
     },

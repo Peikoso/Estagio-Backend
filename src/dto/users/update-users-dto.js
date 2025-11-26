@@ -59,7 +59,7 @@ export class UpdateUsersDto {
     constructor(user){
         this.name = user.name?.trim();
         this.email = user.email?.trim();
-        this.phone = user.phone?.trim();
+        this.phone = Number(user.phone);
         this.picture = user.picture?.trim();
     }
 

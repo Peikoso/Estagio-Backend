@@ -3,7 +3,7 @@ import { UserPreferences } from "../models/user-preferences.js"
 
 
 export const UserPreferencesRepository = {
-    getByUserId: async (id) => {
+    getByFirebaseUid: async (firebaseUid) => {
         const selectIdQuery = 
         `
         SELECT 
@@ -23,11 +23,13 @@ export const UserPreferencesRepository = {
             ON up.id = uc.user_preferences_id
         LEFT JOIN channels c
             ON uc.channel_id = c.id
-        WHERE up.user_id = $1
+        LEFT JOIN users u
+            ON up.user_id = u.id
+        WHERE u.firebase_id = $1
         GROUP BY up.id
         `;
         
-        const result = await pool.query(selectIdQuery, [id]);
+        const result = await pool.query(selectIdQuery, [firebaseUid]);
 
         if(!result.rows[0]){
             return null;
@@ -154,7 +156,7 @@ export const UserPreferencesRepository = {
         const deleteQuery =
         `
         DELETE FROM user_preferences
-        WHERE user_id = $1
+        WHERE id = $1
         `;
 
         await pool.query(deleteQuery, [id]);

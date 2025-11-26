@@ -3,7 +3,6 @@ import { validateTimeFormat } from "../../utils/validations.js";
 
 export class CreateUserPreferencesDto {
     constructor(preferences) {
-        this.userId = preferences.userId?.trim();
         this.dndStartTime = preferences.dndStartTime?.trim();
         this.dndEndTime = preferences.dndEndTime?.trim();
         this.channels = Array.isArray(preferences.channels) ? [...new Set(preferences.channels)] : [];

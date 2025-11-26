@@ -6,12 +6,8 @@ import { ChannelService } from "./channels.js";
 import { isValidUuid } from "../utils/validations.js";
 
 export const UserPreferenceService = {
-    getUserPreferences: async (id) => {
-        if(!isValidUuid(id)){
-            throw new ValidationError('Invalid UUID format for user ID');
-        }
-
-        const userPreference = await UserPreferencesRepository.getByUserId(id);
+    getUserPreferencesByFirebaseUid: async (currentUserFirebaseUid) => {
+        const userPreference = await UserPreferencesRepository.getByFirebaseUid(currentUserFirebaseUid);
 
         if (!userPreference) {
             throw new NotFoundError('User preference not found');
@@ -20,12 +16,10 @@ export const UserPreferenceService = {
         return userPreference;
     },
 
-    createUserPreference: async (dto) => {
+    createUserPreference: async (dto, currentUserFirebaseUid) => {
         const newUserPreference = new UserPreferences(dto);
 
-        await UserService.getUserById(newUserPreference.userId);
-
-        const existingPreference = await UserPreferencesRepository.getByUserId(newUserPreference.userId);   
+        const existingPreference = await UserPreferencesRepository.getByFirebaseUid(currentUserFirebaseUid);   
         if (existingPreference) {
             throw new BusinessLogicError('User preference already exists for this user');
         }
@@ -34,13 +28,16 @@ export const UserPreferenceService = {
             await ChannelService.getChannelById(channelId);
         }
 
+        const user = await UserService.getSelf(currentUserFirebaseUid);
+        newUserPreference.userId = user.id;
+
         const savedUserPreference = await UserPreferencesRepository.create(newUserPreference);
 
         return savedUserPreference;
     },
 
-    updateUserPreferences: async (dto) => {
-        const existingPreference = await UserPreferenceService.getUserPreferences(dto.userId);
+    updateUserPreferences: async (dto, currentUserFirebaseUid) => {
+        const existingPreference = await UserPreferenceService.getUserPreferencesByFirebaseUid(currentUserFirebaseUid);
 
         for (const channelId of dto.channels) {
             await ChannelService.getChannelById(channelId);
@@ -57,10 +54,10 @@ export const UserPreferenceService = {
         return savedUserPreferences;
     },
 
-    deleteUserPreferences: async (userId) => {
-        await UserPreferenceService.getUserPreferences(userId);
+    deleteUserPreferences: async (currentUserFirebaseUid) => {
+        const existingPreference = await UserPreferenceService.getUserPreferencesByFirebaseUid(currentUserFirebaseUid);
 
-        await UserPreferencesRepository.delete(userId);
+        await UserPreferencesRepository.delete(existingPreference.id);
     },
     
 };
