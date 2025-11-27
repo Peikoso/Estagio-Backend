@@ -5,6 +5,7 @@ export class CreateRulesDto {
     constructor(rule) {
         this.name = rule.name?.trim();
         this.description = rule.description?.trim();
+        this.databaseType = rule.databaseType?.trim();
         this.sql = rule.sql?.trim();
         this.priority = rule.priority?.trim();
         this.roles = Array.isArray(rule.roles) ? [...new Set(rule.roles)] : [];
@@ -17,7 +18,6 @@ export class CreateRulesDto {
         this.isActive = rule.isActive;
         this.silenceMode = rule.silenceMode;
         this.postponeDate = rule.postponeDate;
-        this.userCreatorId = rule.userCreatorId?.trim();
     }
 
     validate() {
@@ -26,6 +26,9 @@ export class CreateRulesDto {
         }
         if(typeof this.description !== 'string' || this.description === '') {
             throw new ValidationError('Description is required and must be a non-empty string');
+        }
+        if(this.databaseType !== 'ORACLE' && this.databaseType !== 'POSTGRESQL') {
+            throw new ValidationError('Database type must be ORACLE or POSTGRESQL');
         }
         if(typeof this.sql !== 'string' || this.sql === '') {
             throw new ValidationError('SQL is required and must be a non-empty string');
@@ -59,12 +62,6 @@ export class CreateRulesDto {
         }
         if(this.postponeDate && isNaN(Date.parse(this.postponeDate))) {
             throw new ValidationError('Postpone date must be a Date');
-        }
-        if(typeof this.userCreatorId !== 'string' || this.userCreatorId.trim() === '') {
-            throw new ValidationError('User creator ID must be a non-empty string');
-        }
-        if(this.userCreatorId.length !== 36) {
-            throw new ValidationError('User creator ID must be a valid UUID');
         }
         if(this.name.length > 100) {
             throw new ValidationError('Name must be between 1 and 100 characters');

@@ -8,6 +8,8 @@ export class Runners {
         this.lastRunAt = runner.last_run_at ?? runner.lastRunAt;
         this.createdAt = runner.created_at ?? runner.createdAt;
         this.updatedAt = runner.updated_at ?? runner.updatedAt;
+
+        this.rule = runner.rule;
     }
 
     static fromArray(runnersArray) {   
@@ -27,6 +29,7 @@ export class RunnerQueue{
         this.finishedAt = runnerQueue.finished_at ?? runnerQueue.finishedAt;
         this.attemptCount = runnerQueue.attempt_count ?? runnerQueue.attemptCount;
 
+        this.rule = runnerQueue.rule;
     }
 
     validateBusinessLogic() {

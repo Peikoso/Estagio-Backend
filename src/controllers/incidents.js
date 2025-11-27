@@ -4,14 +4,14 @@ import { ResponseIncidentsDto, ResponseIncidentsLogsDto } from '../dto/incidents
 
 export const IncidentsController = {
     getAllIncidents: async(req, res) => {
-        const { status, rule_id, priority, page, per_page } = req.query;
+        const { status, rule_id, priority, page, perPage } = req.query;
 
         const incidents = await IncidentService.getAllIncidents(
             status, 
             rule_id, 
             priority, 
             page, 
-            per_page
+            perPage
         );
 
         const response = ResponseIncidentsDto.fromArray(incidents);

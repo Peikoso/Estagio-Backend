@@ -2,7 +2,9 @@ import { pool } from '../config/database-conn.js'
 import { Incidents, IncidentsLogs } from '../models/incidents.js'
 
 export const IncidentsRepository = {
-    findAll: async (status, rule_id, priority, limit, offset) => {
+    findAll: async (
+        status, ruleId, priority, profile, roles, roleId, limit, offset
+    ) => {
         const selectQuery = 
         `
         SELECT 
@@ -29,26 +31,32 @@ export const IncidentsRepository = {
             AND ($2::uuid IS NULL OR i.rule_id = $2)
             AND ($3::varchar IS NULL OR i.priority = $3)
             AND (
-            $6::uuid[] IS NULL
-            OR EXISTS (
-                SELECT 1
-                FROM rules_roles rr2
-                WHERE rr2.rule_id = i.rule_id
-                AND rr2.role_id = ANY($6::uuid[])
+            $4::varchar = 'admin'
+            OR (
+                $5::uuid[] IS NOT NULL
+                AND EXISTS (
+                    SELECT 1
+                    FROM rules_roles rr2
+                    WHERE rr2.rule_id = i.rule_id
+                    AND rr2.role_id = ANY($5::uuid[])
+                    AND ($6::uuid IS NULL OR rr2.role_id = $6)
+                )
             )
         )
         GROUP BY i.id
         ORDER BY i.created_at DESC
-        LIMIT $4 OFFSET $5;
+        LIMIT $7 OFFSET $8;
         `
 
         const values = [
             status || null,
-            rule_id || null,
+            ruleId || null,
             priority || null,
+            profile,
+            roles?.length ? roles : null,
+            roleId || null,
             limit,
             offset,
-            null // future admin see all incidents filter
         ];
 
         const result = await pool.query(selectQuery, values);

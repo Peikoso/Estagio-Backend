@@ -5,19 +5,25 @@ import { UpdateRunnerQueueDto } from '../dto/runners/update-runners-dto.js';
 
 export const RunnersController = {
     getAllRunners: async (req, res) => {
-        const runners = await RunnerService.getAllRunners();
+        const currentUserFirebaseUid = req.user.uid;
+        const { ruleName, status, priority, databaseType, page, perPage } = req.query;
+
+        const runners = await RunnerService.getAllRunners(
+            currentUserFirebaseUid, ruleName, status, priority, databaseType, page, perPage
+        );
 
         const response = ResponseRunnersDto.fromArray(runners);
 
         return res.status(200).json(response);
     },
 
-    createRunner: async (req, res) => {
+    /*createRunner: async (req, res) => {
+        const currentUserFirebaseUid = req.user.uid;
         const runnerData = req.body;
 
         const dto = new CreateRunnersDto(runnerData).validate();
 
-        const newRunner = await RunnerService.createRunner(dto);
+        const newRunner = await RunnerService.createRunner(dto, currentUserFirebaseUid);
 
         const response = new ResponseRunnersDto(newRunner);
 
@@ -25,12 +31,13 @@ export const RunnersController = {
     },
 
     updateRunner: async (req, res) => {
+        const currentUserFirebaseUid = req.user.uid;
         const id = req.params.id;
         const runnerData = req.body;
 
         const dto = new CreateRunnersDto(runnerData).validate();
 
-        const updatedRunner = await RunnerService.updateRunner(id, dto);
+        const updatedRunner = await RunnerService.updateRunner(id, dto, currentUserFirebaseUid);
 
         const response = new ResponseRunnersDto(updatedRunner);
 
@@ -38,24 +45,30 @@ export const RunnersController = {
     },
 
     deleteRunner: async (req, res) => {
+        const currentUserFirebaseUid = req.user.uid;
         const runnerId = req.params.id;
 
-        await RunnerService.deleteRunner(runnerId);
+        await RunnerService.deleteRunner(runnerId, currentUserFirebaseUid);
 
         return res.status(204).send();
-    }
+    }*/
 };
 
 export const RunnerQueueController = {
     getAllRunnerQueue: async (req, res) => {
-        const runnerQueue = await RunnerQueueService.getAllRunnerQueue();
+        const currentUserFirebaseUid = req.user.uid;
+        const { ruleName, status, rulePriority, page, perPage } = req.query;
+
+        const runnerQueue = await RunnerQueueService.getAllRunnerQueue(
+            currentUserFirebaseUid, ruleName, status, rulePriority, page, perPage
+        );
 
         const response = ResponseRunnerQueueDto.fromArray(runnerQueue);
 
         return res.status(200).json(response);
     },
 
-    createRunnerQueue: async (req, res) => {
+    /*createRunnerQueue: async (req, res) => {
         const runnerQueueData = req.body;
 
         const dto = new CreateRunnerQueueDto(runnerQueueData).validate();
@@ -86,7 +99,7 @@ export const RunnerQueueController = {
         await RunnerQueueService.deleteRunnerQueue(runnerQueueId);
 
         return res.status(204).send();
-    }
+    }*/
 };
 
 export const RunnerLogsController = {
@@ -98,17 +111,8 @@ export const RunnerLogsController = {
         return res.status(200).json(response);
     },
 
-    getRunnerLogsByRunnerId: async (req, res) => {
-        const runnerId = req.params.runnerId;
 
-        const runnerLogs = await RunnerLogService.getRunnerLogsByRunnerId(runnerId);
-
-        const response = ResponseRunnerLogsDto.fromArray(runnerLogs);
-
-        return res.status(200).json(response);
-    },
-
-    createRunnerLog: async (req, res) => {
+    /*createRunnerLog: async (req, res) => {
         const runnerLogData = req.body;
 
         const dto = new CreateRunnerLogsDto(runnerLogData).validate();
@@ -118,5 +122,5 @@ export const RunnerLogsController = {
         const response = new ResponseRunnerLogsDto(newRunnerLog);
 
         return res.status(201).json(response);
-    }
+    }*/
 };

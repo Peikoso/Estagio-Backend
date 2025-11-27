@@ -6,7 +6,7 @@ import { ResponseUsersDto } from "../dto/users/response-users-dto.js";
 export const UsersController = {
     getAllUsers: async  (req, res) => {
         const currentUserFirebaseUid = req.user.uid;
-        const { name, matricula, role, pending, profile, page, per_page } = req.query;
+        const { name, matricula, role, pending, profile, page, perPage } = req.query;
 
         const users = await UserService.getAllUsers(
             currentUserFirebaseUid, 
@@ -16,7 +16,7 @@ export const UsersController = {
             pending, 
             profile, 
             page, 
-            per_page
+            perPage
         );
 
         const response = ResponseUsersDto.fromArray(users);

@@ -6,6 +6,7 @@ export class Rules {
         this.id = rule.id;
         this.name = rule.name;
         this.description = rule.description;
+        this.databaseType = rule.database_type ?? rule.databaseType;
         this.sql = rule.sql;
         this.priority = rule.priority;
         this.roles = rule.roles;

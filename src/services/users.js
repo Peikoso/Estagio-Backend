@@ -9,11 +9,12 @@ import { config } from '../config/index.js';
 
 export const UserService = {
     getAllUsers: async (
-        currentUserFirebaseUid, name, matricula, role, pending, profile, page, per_page
+        currentUserFirebaseUid, name, matricula, role, pending, profile, page, perPage
     ) => {
         await AuthService.requireAdmin(currentUserFirebaseUid);
+        
         const pageNumber = parseInt(page) > 0 ? parseInt(page) : 1;
-        const limit = parseInt(per_page) > 0 ? parseInt(per_page) : 10;
+        const limit = parseInt(perPage) > 0 ? parseInt(perPage) : 10;
         const offset = (pageNumber - 1) * limit;
 
         const users = await UsersRepository.findAll(

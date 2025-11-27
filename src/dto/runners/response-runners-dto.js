@@ -4,6 +4,8 @@ export class ResponseRunnersDto {
         this.ruleId = runner.ruleId;
         this.status = runner.status;
         this.lastRunAt = runner.lastRunAt;
+
+        this.rule = runner.rule;
     }
 
     static fromArray(runnersArray) {   
@@ -21,6 +23,8 @@ export class ResponseRunnerQueueDto {
         this.finishedAt = runnerQueue.finishedAt;
         this.status = runnerQueue.status;
         this.attemptCount = runnerQueue.attemptCount;
+
+        this.rule = runnerQueue.rule;
     }
 
     static fromArray(runnerQueueArray) {

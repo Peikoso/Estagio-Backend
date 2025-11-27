@@ -25,5 +25,25 @@ export const AuthService = {
     }
     
   },
-  
+
+  requireAdminOrRole: async (firebaseUid, roles) => {
+    const currentUser = await UsersRepository.findByFirebaseId(firebaseUid);
+
+    if (!currentUser) {
+      throw new UnauthorizedError('User not found.');
+    }
+
+    if (currentUser.profile === 'admin') {
+      return;
+    }
+
+    const hasRole = currentUser.roles.some(userRole =>
+      roles.some(role => role.id === userRole.id)
+    );
+
+    if (!hasRole) {
+      throw new ForbiddenError('Insufficient permissions');
+    }
+    
+  }
 };

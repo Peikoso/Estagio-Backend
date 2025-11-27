@@ -15,7 +15,7 @@ export const UsersRepository = {
                         'color', r.color
                     )
                 ) FILTER (WHERE r.id IS NOT NULL),
-                    '[]'::jsonb
+                '[]'::jsonb
             ) AS roles 
         FROM users u 
         LEFT JOIN users_roles ur
