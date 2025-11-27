@@ -56,6 +56,8 @@ export class RunnerLogs {
         this.result = runnerLog.result;
         this.error = runnerLog.error;
         this.executedAt = runnerLog.executed_at ?? runnerLog.executedAt;
+
+        this.rule = runnerLog.rule;
     }
 
     validateBusinessLogic() {

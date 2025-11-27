@@ -148,8 +148,18 @@ export const RunnerQueueService = {
 };
 
 export const RunnerLogService = {
-    getAllRunnersLogs: async () => {
-        const runnersLogs = await RunnerLogsRepository.findAll();
+    getAllRunnersLogs: async (
+        currentUserFirebaseUid, ruleName, executionStatus, rulePriority, databaseType, page, perPage
+    ) => {
+        await AuthService.requireAdmin(currentUserFirebaseUid);
+
+        const pageNumber = parseInt(page) > 0 ? parseInt(page) : 1;
+        const limit = parseInt(perPage) > 0 ? parseInt(perPage) : 10;
+        const offset = (pageNumber - 1) * limit;
+
+        const runnersLogs = await RunnerLogsRepository.findAll(
+            ruleName, executionStatus, rulePriority, databaseType, limit, offset
+        );
 
         return runnersLogs;
     },

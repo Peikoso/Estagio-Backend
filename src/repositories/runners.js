@@ -262,13 +262,47 @@ export const RunnerQueueRepository = {
 };
 
 export const RunnerLogsRepository = {
-    findAll: async () => {
-        const result = await pool.query(
-            `
-            SELECT * FROM runner_logs
-            ORDER BY executed_at DESC;
-            `
-        );
+    findAll: async (
+        ruleName, executionStatus, rulePriority, databaseType, limit, offset
+    ) => {
+        const selectQuery =
+        `
+        SELECT 
+            rlogs.*,
+            json_agg(
+                json_build_object(
+                    'id', rl.id,
+                    'name', rl.name,
+                    'database_type', rl.database_type,
+                    'priority', rl.priority
+                )
+            ) AS rule
+        FROM runner_logs rlogs
+        LEFT JOIN runners r
+            ON rlogs.runner_id = r.id
+        LEFT JOIN rules rl
+            ON r.rule_id = rl.id
+        WHERE
+            ($1::varchar IS NULL OR rl.name ILIKE '%' || $1 || '%')
+            AND ($2::varchar IS NULL OR rlogs.execution_status = $2)
+            AND ($3::varchar IS NULL OR rl.priority = $3)
+            AND ($4::varchar IS NULL OR rl.database_type = $4)
+        GROUP BY rlogs.id
+        ORDER BY executed_at DESC
+        LIMIT $5 OFFSET $6;
+        `;
+
+        const values = [
+            ruleName || null,
+            executionStatus || null,
+            rulePriority || null,
+            databaseType || null,
+            limit,
+            offset,
+        ];
+
+        const result = await pool.query(selectQuery, values);
+
 
         return RunnerLogs.fromArray(result.rows);
     },

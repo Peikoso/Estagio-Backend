@@ -43,6 +43,8 @@ export class ResponseRunnerLogsDto {
         this.result = runnerLog.result;
         this.error = runnerLog.error;
         this.executedAt = runnerLog.executedAt;
+
+        this.rule = runnerLog.rule;
     }
 
     static fromArray(runnerLogsArray) {
