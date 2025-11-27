@@ -37,3 +37,11 @@ export class ForbiddenError extends Error {
         this.status = 403; // Forbidden
     }
 }
+
+export class DatabaseError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'DatabaseError';
+        this.status = 500; // Internal Server Error
+    }
+}
