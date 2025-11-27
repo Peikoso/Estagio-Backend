@@ -27,7 +27,7 @@ export const RunnerService = {
     },
 
     createRunner: async (dto) => {
-        const newRunner = new Runners(dto).validateBusinessLogic();
+        const newRunner = new Runners(dto);
         
         await RuleService.getRuleById(newRunner.ruleId);
 
@@ -43,7 +43,7 @@ export const RunnerService = {
             ...existingRunner,
             ...dto,
             updatedAt: new Date()
-        }).validateBusinessLogic();
+        });
 
         await RuleService.getRuleById(updatedRunner.ruleId);
 

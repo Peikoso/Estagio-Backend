@@ -172,9 +172,8 @@ CREATE TABLE IF NOT EXISTS incidents_events (
 CREATE TABLE IF NOT EXISTS runners (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     rule_id uuid NOT NULL,
-    status varchar(15) NOT NULL,
+    status varchar(15) NOT NULL, -- SCHEDULED, RUNNING, COMPLETED, FAILED
     last_run_at timestamp,
-    next_run_at timestamp,
     created_at timestamp NOT NULL DEFAULT now(),
     updated_at timestamp NOT NULL DEFAULT now(),
     CONSTRAINT fk_runners_rule FOREIGN KEY (rule_id) REFERENCES rules(id) ON DELETE CASCADE

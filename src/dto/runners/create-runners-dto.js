@@ -6,7 +6,6 @@ export class CreateRunnersDto {
         this.ruleId = runner.ruleId?.trim();
         this.status = runner.status?.trim();
         this.lastRunAt = runner.lastRunAt;
-        this.nextRunAt = runner.nextRunAt;
     }
 
     validate() {
@@ -19,11 +18,8 @@ export class CreateRunnersDto {
         if(!validateTimestampFormat(this.lastRunAt)) {
             throw new ValidationError('Last run at must be in the format YYYY-MM-DDTHH:MM:SS.sssZ');
         }
-        if(!validateTimestampFormat(this.nextRunAt)) {
-            throw new ValidationError('Next run at must be in the format YYYY-MM-DDTHH:MM:SS.sssZ');
-        }
-        if(this.status !== 'active' && this.status !== 'inactive') {
-            throw new BusinessLogicError('Status must be either active or inactive');
+        if(this.status !== 'SCHEDULED' && this.status !== 'INACTIVE' && this.status !== 'COMPLETED' && this.status !== 'FAILED') {
+            throw new ValidationError('Status must be either SCHEDULED, INACTIVE, COMPLETED, or FAILED');
         }
         
         return this;

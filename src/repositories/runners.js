@@ -33,7 +33,7 @@ export const RunnersRepository = {
         const insertRunnerQuery = 
         `
         INSERT INTO runners
-        (rule_id, status, last_run_at, next_run_at)
+        (rule_id, status, last_run_at)
         VALUES ($1, $2, $3, $4)
         RETURNING *; 
         `;

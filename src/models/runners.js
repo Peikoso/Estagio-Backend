@@ -6,21 +6,12 @@ export class Runners {
         this.ruleId = runner.rule_id ?? runner.ruleId;
         this.status = runner.status;
         this.lastRunAt = runner.last_run_at ?? runner.lastRunAt;
-        this.nextRunAt = runner.next_run_at ?? runner.nextRunAt;
         this.createdAt = runner.created_at ?? runner.createdAt;
         this.updatedAt = runner.updated_at ?? runner.updatedAt;
     }
 
     static fromArray(runnersArray) {   
         return runnersArray.map(runner => new Runners(runner));
-    }
-
-    validateBusinessLogic() {
-        if(this.lastRunAt > this.nextRunAt) {
-            throw new BusinessLogicError('Last run time must be before next run time');
-        }
-
-        return this;
     }
     
 };
