@@ -2,7 +2,7 @@ import { pool } from '../config/database-conn.js';
 import { Runners, RunnerQueue, RunnerLogs } from '../models/runners.js';
 
 export const RunnersRepository = {
-    findAll: async (
+    findAllPaginatedWithFilters: async (
         ruleName, status, priority, databaseType, limit, offset
     ) => {
         const selectQuery = 
@@ -43,6 +43,26 @@ export const RunnersRepository = {
         const result = await pool.query(selectQuery, values);
 
         return Runners.fromArray(result.rows);
+    },
+
+    findAllForScheduling: async () => {
+        const result = await pool.query(
+            `
+            SELECT r.*
+            FROM runners r
+            LEFT JOIN rules rl
+                ON r.rule_id = rl.id
+            ORDER BY 
+                CASE rl.priority
+                    WHEN 'HIGH' THEN 1
+                    WHEN 'MEDIUM' THEN 2
+                    WHEN 'LOW' THEN 3
+                    ELSE 4
+                END;
+            `
+        );
+
+        return Runners.fromArray(result.rows)
     },
 
     findById: async (id) => {
@@ -87,7 +107,7 @@ export const RunnersRepository = {
         UPDATE runners
         SET rule_id = $1,
             status = $2,
-            last_run_at = $3,
+            last_run_at = $3
         WHERE id = $4
         RETURNING *;
         `;
@@ -194,12 +214,16 @@ export const RunnerQueueRepository = {
         SELECT * FROM runner_queue
         WHERE runner_id = $1
         AND status in ('PENDING', 'PROCESSING')
-        ORDER BY scheduled_for ASC;
+        LIMIT 1;
         `;
 
         const result = await pool.query(selectQuery, [runnerId]);
 
-        return RunnerQueue.fromArray(result.rows);
+        if(!result.rows[0]){
+            return null;
+        }
+
+        return new RunnerQueue(result.rows[0]);
     },
 
     create: async (runnerQueue) => {

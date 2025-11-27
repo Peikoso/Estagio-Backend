@@ -16,7 +16,7 @@ export const RunnerService = {
         const limit = parseInt(perPage) > 0 ? parseInt(perPage) : 10;
         const offset = (pageNumber - 1) * limit;
 
-        const runners = await RunnersRepository.findAll(
+        const runners = await RunnersRepository.findAllPaginatedWithFilters(
             ruleName, status, priority, databaseType, limit, offset
         );
 

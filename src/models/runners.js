@@ -15,6 +15,12 @@ export class Runners {
     static fromArray(runnersArray) {   
         return runnersArray.map(runner => new Runners(runner));
     }
+
+    updateStatus(status){
+        this.status = status;
+
+        return this;
+    }
     
 };
 

@@ -7,6 +7,7 @@ export const config = {
     PORT: process.env.PORT,
     DATABASE_URL: process.env.DATABASE_URL,
     DEFAULT_PASSWORD: process.env.DEFAULT_PASSWORD,
-    SERVICE_PATH: process.env.SERVICE_PATH
+    SERVICE_PATH: process.env.SERVICE_PATH,
+    ENABLE_RUNNER_WORKER: process.env.ENABLE_RUNNER_WORKER
 };
 

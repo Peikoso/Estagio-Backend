@@ -6,6 +6,7 @@ import { AuthMiddleware } from './middleware/auth-middleware.js';
 import { ErrorMiddleware } from './middleware/error-middleware.js';
 import { ValidateBodyMiddleware } from './middleware/validate-body-middleware.js';
 import { config } from './config/index.js';
+import { runnerScheduler } from './worker/runner-scheduler.js';
 
 
 const app = express();
@@ -36,4 +37,15 @@ process.on('uncaughtException', err => {
 // Start
 app.listen(PORT, () => {
   console.log(`API rodando em http://localhost:${PORT}`);
+
+    // Inicia o Runner Scheduler e Worker
+  if (config.ENABLE_RUNNER_WORKER !== 'false') {
+    console.log('Iniciando Runner Scheduler...');
+    runnerScheduler.start().catch(error => {
+      console.error('Erro ao iniciar Runner Scheduler:', error);
+    });
+
+  } else {
+    console.log('Runner System está desativado via configuração.');
+  }
 });
