@@ -105,9 +105,7 @@ class RunnerScheduler {
 
         console.log(`[Runner Scheduler] Runner agendado para regra: "${rule.name}" (intervalo: ${rule.executionIntervalMs / 1000 / 60 } minutos)`)
 
-        const updatedRunner = runner.updateStatus('SCHEDULED');
-
-        await RunnersRepository.update(updatedRunner);
+        await RunnersRepository.update(runner.updateStatus('SCHEDULED'));
 
         return true;
     }

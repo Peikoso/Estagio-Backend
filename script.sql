@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS incidents_events (
 CREATE TABLE IF NOT EXISTS runners (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     rule_id uuid NOT NULL,
-    status varchar(15) NOT NULL DEFAULT 'IDLE', -- IDLE, SCHEDULED, RUNNING, COMPLETED, FAILED
+    status varchar(15) NOT NULL DEFAULT 'IDLE', -- IDLE, SCHEDULED, RUNNING, FAILED
     last_run_at timestamp,
     created_at timestamp NOT NULL DEFAULT now(),
     updated_at timestamp NOT NULL DEFAULT now(),

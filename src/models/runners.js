@@ -16,8 +16,22 @@ export class Runners {
         return runnersArray.map(runner => new Runners(runner));
     }
 
-    updateStatus(status){
+    updateStatus(status) {
         this.status = status;
+
+        return this;
+    }
+
+    idle() {
+        this.status = 'IDLE';
+        this.lastRunAt = new Date();
+
+        return this;
+    }
+
+    fail() {
+        this.status = 'ERROR'
+        this.lastRunAt = new Date();
 
         return this;
     }
@@ -42,6 +56,43 @@ export class RunnerQueue{
         if(this.attemptCount < 0) {
             throw new BusinessLogicError('Attempts cannot be negative');
         }
+
+        return this;
+    }
+
+    start() {
+        this.status = 'PROCESSING';
+        this.startedAt = new Date();
+
+        return this;
+    }
+
+    complete() {
+        this.status = 'COMPLETED';
+        this.finishedAt = new Date();
+
+        return this;
+    }
+
+    fail(attemptCount) {
+        this.status = 'FAILED'
+        this.finishedAt = new Date();
+        this.attemptCount = attemptCount
+
+        return this;
+    }
+
+    retry(attemptCount) {
+        this.status = 'PENDING';
+        this.attemptCount = attemptCount;
+        this.startedAt = null;
+        this.finishedAt = null;
+
+        return this;
+    }
+
+    updateStatus(status){
+        this.status = status;
 
         return this;
     }

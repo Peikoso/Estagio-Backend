@@ -193,7 +193,7 @@ export const RunnerQueueRepository = {
         return new RunnerQueue(result.rows[0]);
     },
 
-    findPendingRunnerQueues: async (limit) => {
+    findPendingJobs: async (limit) => {
         const selectQuery = 
         `
         SELECT * FROM runner_queue
