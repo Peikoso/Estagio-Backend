@@ -13,7 +13,7 @@ import { runnerWorker } from './worker/runner-worker.js';
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(AuthMiddleware);  // Desativado temporariamente para permitir acesso sem autenticação
+app.use(AuthMiddleware);  // Comente para desativar a Auth (Vai quebrar praticamente todos endpoints, sendo necessarios alterações para funcionar sem Auth..)
 app.use(ValidateBodyMiddleware)
 
 const PORT = config.PORT || 8000;
