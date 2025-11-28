@@ -18,8 +18,8 @@ export class CreateRunnersDto {
         if(!validateTimestampFormat(this.lastRunAt)) {
             throw new ValidationError('Last run at must be in the format YYYY-MM-DDTHH:MM:SS.sssZ');
         }
-        if(this.status !== 'IDLE' && this.status !== 'SCHEDULED' && this.status !== 'INACTIVE' && this.status !== 'COMPLETED' && this.status !== 'FAILED') {
-            throw new ValidationError('Status must be either IDLE, SCHEDULED, INACTIVE, COMPLETED, or FAILED');
+        if(this.status !== 'IDLE' && this.status !== 'SCHEDULED' && this.status !== 'RUNNING' && this.status !== 'FAILED') {
+            throw new ValidationError('Status must be either IDLE, SCHEDULED, RUNNING, or FAILED');
         }
         
         return this;

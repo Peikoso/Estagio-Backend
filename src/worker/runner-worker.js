@@ -122,7 +122,7 @@ class RunnerWorker {
 
             const newAttemptCount = (job.attemptCount || 0) + 1;
 
-            if (newAttemptCount >= 3) {
+            if (newAttemptCount >= rule.maxErrorCount) {
                 await RunnerQueueRepository.update(job.fail(newAttemptCount));
             } else {
                 await RunnerQueueRepository.update(job.retry(newAttemptCount));
