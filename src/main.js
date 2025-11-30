@@ -24,10 +24,6 @@ const PORT = config.PORT || 8000;
   await dbSetup.createAdminUser();
 })();
 
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-});
-
 app.get('/', async(req, res) => {
     res.json('Bem Vindo ao QQMonitor');
 });
