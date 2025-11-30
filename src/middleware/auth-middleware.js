@@ -3,7 +3,8 @@ import { UnauthorizedError } from "../utils/errors.js";
 
 const publicRoutes = [
   { method: 'POST', path: '/api/v1/users/register' },
-  { method: 'POST', path: '/api/v1/login' }
+  { method: 'POST', path: '/api/v1/login' },
+  { method: 'GET', path: '/health' }
 ];
 
 export const AuthMiddleware = async (req, res, next) => {

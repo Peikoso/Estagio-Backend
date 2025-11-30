@@ -112,11 +112,11 @@ AND NOT EXISTS (SELECT 1 FROM user_preferences_channels WHERE user_preferences_i
 INSERT INTO rules (name, description, database_type, sql, priority, execution_interval_ms, max_error_count, timeout_ms, start_time, end_time, notification_enabled, is_active, silence_mode, user_creator_id)
 SELECT d.name, d.description, d.database_type, d.sql, d.priority, d.execution_interval_ms, d.max_error_count, d.timeout_ms, d.start_time::time, d.end_time::time, d.notification_enabled::boolean, d.is_active::boolean, d.silence_mode::boolean, (SELECT id FROM users WHERE email = 'admin@admin.com' LIMIT 1)
 FROM (VALUES
-    ('Verificar CPU Alta', 'Monitora uso de CPU acima de 80%', 'POSTGRESQL', 'SELECT * FROM system_metrics WHERE cpu_usage > 80', 'HIGH', 60000, 3, 5000, '00:00:00', '23:59:59', true, true, false),
-    ('Verificar Memória', 'Monitora uso de memória acima de 90%', 'POSTGRESQL', 'SELECT * FROM system_metrics WHERE memory_usage > 90', 'CRITICAL', 30000, 5, 5000, '00:00:00', '23:59:59', true, true, false),
-    ('Verificar Disco Cheio', 'Monitora espaço em disco abaixo de 10%', 'POSTGRESQL', 'SELECT * FROM system_metrics WHERE disk_free < 10', 'MEDIUM', 120000, 3, 5000, '06:00:00', '22:00:00', true, true, false),
+    ('Verificar Usuarios', 'Monitora a quantidade de usuarios', 'POSTGRESQL', 'SELECT count(*) FROM users', 'HIGH', 60000, 3, 5000, '00:00:00', '23:59:59', true, true, false),
+    ('Verificar Incidentes', 'Monitora a quantidade de incidentes abertos', 'POSTGRESQL', 'SELECT count(*) FROM incidents WHERE status = ''OPEN''', 'HIGH', 30000, 5, 5000, '00:00:00', '23:59:59', true, true, false),
+    ('Verificar Notificações', 'Monitora as notificações enviadas (não lidas)', 'POSTGRESQL', 'SELECT count(*) FROM notifications WHERE status = ''SENT''', 'MEDIUM', 120000, 3, 5000, '06:00:00', '22:00:00', true, true, false),
     ('Verificar Conexões BD', 'Monitora conexões ativas no banco de dados', 'POSTGRESQL', 'SELECT count(*) FROM pg_stat_activity WHERE state = ''active''', 'LOW', 180000, 2, 3000, '00:00:00', '23:59:59', true, true, false),
-    ('Verificar Logs de Erro', 'Monitora logs de erro críticos', 'POSTGRESQL', 'SELECT * FROM application_logs WHERE level = ''ERROR'' AND created_at > NOW() - INTERVAL ''5 minutes''', 'HIGH', 90000, 4, 8000, '00:00:00', '23:59:59', true, false, false)
+    ('Verificar Logs de Erro', 'Monitora logs de erro críticos', 'POSTGRESQL', 'SELECT * FROM runner_logs WHERE execution_status = ''ERROR'' AND created_at > NOW() - INTERVAL ''5 minutes''', 'HIGH', 90000, 4, 8000, '00:00:00', '23:59:59', true, false, false)
 ) AS d(name, description, database_type, sql, priority, execution_interval_ms, max_error_count, timeout_ms, start_time, end_time, notification_enabled, is_active, silence_mode)
 WHERE NOT EXISTS (SELECT 1 FROM rules WHERE name = d.name);
 
@@ -151,9 +151,9 @@ AND NOT EXISTS (SELECT 1 FROM rules_roles WHERE rule_id = r.id AND role_id = ro.
 INSERT INTO runners (rule_id, status, last_run_at)
 SELECT r.id, d.status, d.last_run_at::timestamp
 FROM (VALUES 
-    ('Verificar CPU Alta', 'IDLE', '2025-11-27 10:30:00'),
-    ('Verificar Memória', 'RUNNING', '2025-11-27 11:45:00'),
-    ('Verificar Disco Cheio', 'COMPLETED', '2025-11-27 09:15:00'),
+    ('Verificar Usuarios', 'IDLE', '2025-11-27 10:30:00'),
+    ('Verificar Incidentes', 'RUNNING', '2025-11-27 11:45:00'),
+    ('Verificar Notificações', 'COMPLETED', '2025-11-27 09:15:00'),
     ('Verificar Conexões BD', 'SCHEDULED', '2025-11-27 08:00:00'),
     ('Verificar Logs de Erro', 'FAILED', '2025-11-27 07:20:00')
 ) AS d(rule_name, status, last_run_at)
@@ -167,9 +167,9 @@ WHERE NOT EXISTS (SELECT 1 FROM runners WHERE rule_id = r.id);
 INSERT INTO runner_queue (runner_id, status, scheduled_for, queued_at, started_at, finished_at, attempt_count)
 SELECT ru.id, d.status, d.scheduled_for::timestamp, d.queued_at::timestamp, d.started_at::timestamp, d.finished_at::timestamp, d.attempt_count
 FROM (VALUES
-    ('Verificar CPU Alta', 'COMPLETED', '2025-11-27 10:30:00', '2025-11-27 10:30:05', '2025-11-27 10:30:10', '2025-11-27 10:30:15', 1),
-    ('Verificar Memória', 'PROCESSING', '2025-11-27 11:45:00', '2025-11-27 11:45:03', '2025-11-27 11:45:08', NULL, 1),
-    ('Verificar Disco Cheio', 'COMPLETED', '2025-11-27 09:15:00', '2025-11-27 09:15:02', '2025-11-27 09:15:05', '2025-11-27 09:15:12', 1),
+    ('Verificar Usuarios', 'COMPLETED', '2025-11-27 10:30:00', '2025-11-27 10:30:05', '2025-11-27 10:30:10', '2025-11-27 10:30:15', 1),
+    ('Verificar Incidentes', 'PENDING', '2025-11-27 11:45:00', '2025-11-27 11:45:03', NULL, NULL, 0),
+    ('Verificar Notificações', 'COMPLETED', '2025-11-27 09:15:00', '2025-11-27 09:15:02', '2025-11-27 09:15:05', '2025-11-27 09:15:12', 1),
     ('Verificar Conexões BD', 'PENDING', '2025-11-27 12:00:00', '2025-11-27 11:59:55', NULL, NULL, 0),
     ('Verificar Logs de Erro', 'FAILED', '2025-11-27 07:20:00', '2025-11-27 07:20:02', '2025-11-27 07:20:05', '2025-11-27 07:20:08', 3)
 ) AS d(rule_name, status, scheduled_for, queued_at, started_at, finished_at, attempt_count)
@@ -189,9 +189,9 @@ SELECT
     (SELECT id FROM runner_queue WHERE runner_id = ru.id AND scheduled_for = d.scheduled_for_ref::timestamp LIMIT 1),
     d.run_time_ms, d.execution_status, d.rows_affected, d.result, d.error, d.executed_at::timestamp
 FROM (VALUES
-    ('Verificar CPU Alta', '2025-11-27 10:30:00', 1250, 'SUCCESS', 3, '3 registros encontrados com CPU alta', NULL, '2025-11-27 10:30:15'),
-    ('Verificar Memória', '2025-11-27 11:45:00', 2100, 'SUCCESS', 1, '1 registro encontrado com memória alta', NULL, '2025-11-27 11:45:10'),
-    ('Verificar Disco Cheio', '2025-11-27 09:15:00', 890, 'SUCCESS', 0, 'Nenhum disco com espaço crítico', NULL, '2025-11-27 09:15:12'),
+    ('Verificar Usuarios', '2025-11-27 10:30:00', 1250, 'SUCCESS', 3, '3 registros encontrados com CPU alta', NULL, '2025-11-27 10:30:15'),
+    ('Verificar Incidentes', '2025-11-27 11:45:00', 2100, 'SUCCESS', 1, '1 registro encontrado com memória alta', NULL, '2025-11-27 11:45:10'),
+    ('Verificar Notificações', '2025-11-27 09:15:00', 890, 'SUCCESS', 0, 'Nenhum disco com espaço crítico', NULL, '2025-11-27 09:15:12'),
     ('Verificar Conexões BD', NULL, 2450, 'SUCCESS', 45, '45 conexões ativas no banco', NULL, '2025-11-27 08:00:00'),
     ('Verificar Logs de Erro', '2025-11-27 07:20:00', 5100, 'TIMEOUT', NULL, NULL, 'Query execution timeout after 5000ms', '2025-11-27 07:20:08')
 ) AS d(rule_name, scheduled_for_ref, run_time_ms, execution_status, rows_affected, result, error, executed_at)
@@ -208,11 +208,11 @@ SELECT
     (SELECT id FROM users WHERE email = d.user_email LIMIT 1),
     r.id, d.status, d.priority, d.ack_at::timestamp, d.closed_at::timestamp
 FROM (VALUES
-    ('admin@admin.com', 'Verificar CPU Alta', 'CLOSED', 'HIGH', '2025-11-27 10:35:00', '2025-11-27 11:20:00'),
-    ('penkas@example.com', 'Verificar Memória', 'ACK', 'CRITICAL', '2025-11-27 11:50:00', NULL),
-    ('penkas@example.com', 'Verificar Disco Cheio', 'OPEN', 'MEDIUM', NULL, NULL),
-    ('rogerio@example.com', 'Verificar CPU Alta', 'CLOSED', 'HIGH', '2025-11-26 14:10:00', '2025-11-26 15:30:00'),
-    ('penkas@example.com', 'Verificar Memória', 'ACK', 'CRITICAL', '2025-11-27 08:15:00', NULL),
+    ('admin@admin.com', 'Verificar Usuarios', 'CLOSED', 'HIGH', '2025-11-27 10:35:00', '2025-11-27 11:20:00'),
+    ('penkas@example.com', 'Verificar Incidentes', 'ACK', 'CRITICAL', '2025-11-27 11:50:00', NULL),
+    ('penkas@example.com', 'Verificar Notificações', 'OPEN', 'MEDIUM', NULL, NULL),
+    ('rogerio@example.com', 'Verificar Usuarios', 'CLOSED', 'HIGH', '2025-11-26 14:10:00', '2025-11-26 15:30:00'),
+    ('penkas@example.com', 'Verificar Incidentes', 'ACK', 'CRITICAL', '2025-11-27 08:15:00', NULL),
     ('maria.santos@qqtech.com', 'Verificar Logs de Erro', 'CLOSED', 'HIGH', '2025-11-27 07:30:00', '2025-11-27 08:00:00')
 ) AS d(user_email, rule_name, status, priority, ack_at, closed_at)
 JOIN rules r ON r.name = d.rule_name
@@ -231,9 +231,9 @@ INSERT INTO incidents_events (incident_id, previous_status, current_status, comm
 SELECT 
     inc.id, d.previous_status, d.current_status, d.comment, (SELECT id FROM users WHERE email = 'admin@admin.com' LIMIT 1)
 FROM (VALUES
-    ('Verificar CPU Alta', 'OPEN', 'ACK', 'Incidente reconhecido pelo operador'),
-    ('Verificar CPU Alta', 'ACK', 'CLOSED', 'Problema resolvido - CPU normalizada'),
-    ('Verificar Memória', 'OPEN', 'ACK', 'Verificando uso de memória'),
+    ('Verificar Usuarios', 'OPEN', 'ACK', 'Incidente reconhecido pelo operador'),
+    ('Verificar Usuarios', 'ACK', 'CLOSED', 'Problema resolvido - CPU normalizada'),
+    ('Verificar Incidentes', 'OPEN', 'ACK', 'Verificando uso de memória'),
     ('Verificar Logs de Erro', 'OPEN', 'ACK', 'Analisando causa raiz'),
     ('Verificar Logs de Erro', 'ACK', 'CLOSED', 'Memória cache limpa - resolvido')
 ) AS d(rule_name, previous_status, current_status, comment)
@@ -269,11 +269,11 @@ SELECT
     (SELECT id FROM channels WHERE type=d.channel_type LIMIT 1),
     u.id, d.title, d.message, d.sent_at::timestamp, d.status, d.read_at::timestamp
 FROM (VALUES
-    ('Verificar CPU Alta', 'EMAIL', 'admin@admin.com', 'CPU Alta Detectada', 'O uso de CPU ultrapassou 80% nos últimos 5 minutos', '2025-11-27 10:30:20', 'READED', '2025-11-27 10:32:00'),
-    ('Verificar Memória', 'COMUNIQ', 'penkas@example.com', 'CRÍTICO: Memória Alta', 'Uso de memória crítico detectado - 92%', '2025-11-27 11:45:15', 'READED', '2025-11-27 11:46:00'),
-    ('Verificar Disco Cheio', 'PUSH', 'penkas@example.com', 'Disco com Pouco Espaço', 'Servidor XYZ com menos de 10% de espaço livre', '2025-11-27 12:00:00', 'SENT', NULL),
-    ('Verificar CPU Alta', 'PUSH SOUND', 'rogerio@example.com', 'Incidente Resolvido', 'CPU normalizada - incidente fechado', '2025-11-26 15:35:00', 'READED', '2025-11-26 15:40:00'),
-    ('Verificar Memória', 'EMAIL', 'penkas@example.com', 'Memória Crítica', 'Memória do servidor principal em nível crítico', '2025-11-27 08:16:00', 'SENT', NULL)
+    ('Verificar Usuarios', 'EMAIL', 'admin@admin.com', 'CPU Alta Detectada', 'O uso de CPU ultrapassou 80% nos últimos 5 minutos', '2025-11-27 10:30:20', 'READED', '2025-11-27 10:32:00'),
+    ('Verificar Incidentes', 'COMUNIQ', 'penkas@example.com', 'CRÍTICO: Memória Alta', 'Uso de memória crítico detectado - 92%', '2025-11-27 11:45:15', 'READED', '2025-11-27 11:46:00'),
+    ('Verificar Notificações', 'PUSH', 'penkas@example.com', 'Disco com Pouco Espaço', 'Servidor XYZ com menos de 10% de espaço livre', '2025-11-27 12:00:00', 'SENT', NULL),
+    ('Verificar Usuarios', 'PUSH SOUND', 'rogerio@example.com', 'Incidente Resolvido', 'CPU normalizada - incidente fechado', '2025-11-26 15:35:00', 'READED', '2025-11-26 15:40:00'),
+    ('Verificar Incidentes', 'EMAIL', 'penkas@example.com', 'Memória Crítica', 'Memória do servidor principal em nível crítico', '2025-11-27 08:16:00', 'SENT', NULL)
 ) AS d(rule_name, channel_type, user_email, title, message, sent_at, status, read_at)
 JOIN users u ON u.email = d.user_email
 JOIN rules r ON r.name = d.rule_name
@@ -289,10 +289,10 @@ AND inc.id = (SELECT id FROM incidents WHERE rule_id = r.id LIMIT 1);
 INSERT INTO audit_logs (entity_id, entity_type, action_type, old_value, new_value, user_id)
 SELECT d.entity_id, d.entity_type, d.action_type, d.old_value::jsonb, d.new_value::jsonb, u.id
 FROM (VALUES
-    ((SELECT id FROM rules WHERE name = 'Verificar CPU Alta' LIMIT 1), 'rules', 'UPDATE', '{"is_active": true}', '{"is_active": false}', 'admin@admin.com'),
+    ((SELECT id FROM rules WHERE name = 'Verificar Usuarios' LIMIT 1), 'rules', 'UPDATE', '{"is_active": true}', '{"is_active": false}', 'admin@admin.com'),
     ((SELECT id FROM users WHERE email = 'maria@example.com' LIMIT 1), 'users', 'UPDATE', '{"pending": true}', '{"pending": false}', 'admin@admin.com'),
-    ((SELECT id FROM incidents WHERE rule_id = (SELECT id FROM rules WHERE name = 'Verificar CPU Alta' LIMIT 1) LIMIT 1), 'incidents', 'UPDATE', '{"status": "ACK"}', '{"status": "CLOSED"}', 'admin@admin.com'),
-    ((SELECT id FROM rules WHERE name = 'Verificar Disco Cheio' LIMIT 1), 'rules', 'CREATE', NULL, '{"name": "Verificar Disco Cheio", "is_active": true}', 'penkas@example.com'),
+    ((SELECT id FROM incidents WHERE rule_id = (SELECT id FROM rules WHERE name = 'Verificar Usuarios' LIMIT 1) LIMIT 1), 'incidents', 'UPDATE', '{"status": "ACK"}', '{"status": "CLOSED"}', 'admin@admin.com'),
+    ((SELECT id FROM rules WHERE name = 'Verificar Notificações' LIMIT 1), 'rules', 'CREATE', NULL, '{"name": "Verificar Notificações", "is_active": true}', 'penkas@example.com'),
     ((SELECT id FROM channels WHERE type='PUSH' LIMIT 1), 'channels', 'UPDATE', '{"is_active": true}', '{"is_active": false}', 'rogerio@example.com')
 ) AS d(entity_id, entity_type, action_type, old_value, new_value, user_email)
 JOIN users u ON u.email = d.user_email
