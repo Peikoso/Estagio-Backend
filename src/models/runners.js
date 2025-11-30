@@ -15,26 +15,6 @@ export class Runners {
     static fromArray(runnersArray) {   
         return runnersArray.map(runner => new Runners(runner));
     }
-
-    updateStatus(status) {
-        this.status = status;
-
-        return this;
-    }
-
-    idle() {
-        this.status = 'IDLE';
-        this.lastRunAt = new Date();
-
-        return this;
-    }
-
-    fail() {
-        this.status = 'ERROR'
-        this.lastRunAt = new Date();
-
-        return this;
-    }
     
 };
 
@@ -50,51 +30,6 @@ export class RunnerQueue{
         this.attemptCount = runnerQueue.attempt_count ?? runnerQueue.attemptCount;
 
         this.rule = runnerQueue.rule;
-    }
-
-    validateBusinessLogic() {
-        if(this.attemptCount < 0) {
-            throw new BusinessLogicError('Attempts cannot be negative');
-        }
-
-        return this;
-    }
-
-    start() {
-        this.status = 'PROCESSING';
-        this.startedAt = new Date();
-
-        return this;
-    }
-
-    complete() {
-        this.status = 'COMPLETED';
-        this.finishedAt = new Date();
-
-        return this;
-    }
-
-    fail(attemptCount) {
-        this.status = 'FAILED'
-        this.finishedAt = new Date();
-        this.attemptCount = attemptCount
-
-        return this;
-    }
-
-    retry(attemptCount) {
-        this.status = 'PENDING';
-        this.attemptCount = attemptCount;
-        this.startedAt = null;
-        this.finishedAt = null;
-
-        return this;
-    }
-
-    updateStatus(status){
-        this.status = status;
-
-        return this;
     }
 
     static fromArray(runnerQueueArray) {
@@ -115,17 +50,6 @@ export class RunnerLogs {
         this.executedAt = runnerLog.executed_at ?? runnerLog.executedAt;
 
         this.rule = runnerLog.rule;
-    }
-
-    validateBusinessLogic() {
-        if(this.runTimeMs <= 0) {
-            throw new BusinessLogicError('Run time must be positive');
-        }
-        if(this.rowsAffected < 0) {
-            throw new BusinessLogicError('Rows affected cannot be negative');
-        }
-
-        return this;
     }
 
     static fromArray(runnerLogsArray) {

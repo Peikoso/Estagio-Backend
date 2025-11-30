@@ -8,6 +8,7 @@ export const config = {
     DATABASE_URL: process.env.DATABASE_URL,
     DEFAULT_PASSWORD: process.env.DEFAULT_PASSWORD,
     SERVICE_PATH: process.env.SERVICE_PATH,
-    ENABLE_RUNNER_WORKER: process.env.ENABLE_RUNNER_WORKER
+    ENABLE_RUNNER_WORKER: process.env.ENABLE_RUNNER_WORKER,
+    FIREBASE_API_KEY: process.env.FIREBASE_API_KEY
 };
 

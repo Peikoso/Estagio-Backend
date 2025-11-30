@@ -1,5 +1,5 @@
 import { pool } from "../config/database-conn.js";
-import { DBTest } from "../models/dbTest.js";
+import { DBTest } from "../models/db-test.js";
 
 export const DBTestRepository = {
     testConnection: async () => {
